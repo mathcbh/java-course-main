@@ -1,0 +1,16 @@
+= WS client from Java
+:sectanchors:
+
+It is important to understand how web services that you develop will be used by your clients. Here we will adopt the role of the client and get some training at using web services. It will also be useful when you will want to test your own web services.
+
+NOTE: The reader supposedly has basic knowledge of https://github.com/oliviercailloux/java-course/blob/main/HTTP.adoc[HTTP] and has finished the exercices https://github.com/oliviercailloux/java-course/blob/master/WS%20client/Curl.adoc[using curl]. The reader has read https://github.com/oliviercailloux/java-course/blob/master/WS%20client/JAX-RS%20client.adoc[JAX-RS client].
+
+== From Java
+We will access those same web services we practiced with in the exercice using Curl, now from Java, and more specifically using the JAX-RS standard.
+
+* Use the skeleton code from the JAX-RS client page (link above) and modify it to programmatically retrieve a simple web page.
+* Replace the skeleton code with the right calls so that you access JSONPlaceholder as requested in the previous exercice. Check that you obtain the expected result. Use appropriate “URI templates” (`{path}`) for nicer code.
+* Add a method that retrieves the Wikipedia page as requested per the second exercice, above.
+
+A solution is provided (link above). Do not cheat! Look at the solution only after you solved it by yourself.
+

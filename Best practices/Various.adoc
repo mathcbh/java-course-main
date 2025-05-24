@@ -1,0 +1,23 @@
+= Various
+
+== Use URI rather than URL
+The `URL` class has a flaw: its https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/net/URL.html#equals(java.lang.Object)[`URL#equals`] method accesses the network. This makes it inadequate for a wide range of uses. The `URL` class https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/net/class-use/URL.html[intervenes] in more packages than the `URI` class in the JDK, but that seems to be for historical reasons: `URI` is https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/net/class-use/URI.html[priviledged] in recent libraries, notably, in the https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/nio/file/spi/FileSystemProvider.html[FileSystemProvider], in the module system and in the JAX-RS client API. `URI` is also nicer to use thanks to its https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/net/URI.html#create(java.lang.String)[constructor] which does not throw checked exceptions.
+
+From the point of view of what it can represent, `URL` is more constrained than `URI` in that it allows only absolute URLs; more constrained in the protocols it allows; but less constrained in the sense of the syntax it allows (see https://stackoverflow.com/a/23384891[SO]).
+
+Consider using https://javadoc.io/doc/jakarta.ws.rs/jakarta.ws.rs-api/2.1.6/javax/ws/rs/core/UriBuilder.html[`URIBuilder`] from Jakarta web services API for creating instances of `URI` easily.
+
+== Consider suppressing the warning about missing serialVersionUID
+Use `@SuppressWarnings("serial")` rather than adding a `serialVersionUID` field to your class when you do not want to support serialization: it documents your intent better. (See https://stackoverflow.com/a/7636578[SO].)
+
+== Installing the JDK
+For this course, you need Java 17 or more recent.
+
+Important advice. Uninstall every version of Java you have, keep only one: the latest JDK (which includes a JRE). This prevents problems with tools selecting the wrong JDK or JRE.
+
+* On Debian, install https://packages.debian.org/search?keywords=openjdk-17-jdk&searchon=names&exact=1&suite=all&section=all[openjdk-17-jdk] (and https://packages.debian.org/search?keywords=openjdk-17-source&searchon=names&exact=1&suite=all&section=all[openjdk-17-source] to have the Javadoc accessible even when coding offline).
+* On Windows or MacOS, install the https://adoptium.net/[Adoptium] package. You should obtain a `.msi` file for Windows or a `.pkg` file for MacOS, that installs easily and configures the system correctly.
+
+To check that it is correctly installed, open a https://github.com/oliviercailloux/java-course/blob/main/Git/Shell.adoc[shell], and verify that both the `java --version` and `javac --version` commands print the correct java version; then, verify that typing `jshell` does start jshell (it should say something like "Welcome to JShell" and display a jshell prompt; type `/exit` to exit).
+
+(Look at https://github.com/oliviercailloux/java-course/blob/8f61ac1a6cdc1c9b00237e1a1f26e947d5b26e58/Best%20practices/Various.adoc#installing-the-jdk[this previous version] for manual installation of the OpenJDK build on Windows or more information about the configuration of environment variables.)

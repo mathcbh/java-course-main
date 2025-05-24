@@ -1,0 +1,73 @@
+= Projets : démarrage
+
+== Énoncés
+Les projets sont ci-dessous. 
+Lisez la doc du vôtre.
+Voyez le fichier TODO.adoc pour vous faire une idée approximative des tâches possibles. Vous ne devez pas tout faire ! Placez l’emphase sur ce qui vous intéresse et proposez.
+
+* https://github.com/oliviercailloux/2D-Library[2D Library]
+* https://github.com/oliviercailloux/Apartments[Apartments]
+* https://github.com/oliviercailloux/J-Confs[J-Confs]
+* https://github.com/oliviercailloux/JMCDA-base[J-MCDA]
+* https://github.com/oliviercailloux/J-Voting[J-Voting]
+* https://github.com/oliviercailloux/MIDO-SVG[MIDO SVG]
+//* https://github.com/oliviercailloux/Teach-spreadsheets[Teach spreadsheets]
+
+Possibilité de basculer sur https://github.com/oliviercailloux/Assisted-Board-Games[Assisted Board Games] si vous souhaitez un projet web (mais difficulté accrue). 
+Possibilité de basculer sur https://github.com/oliviercailloux/JLP[Java Linear Programming]. 
+À discuter avec moi.
+
+== Instructions
+Vous procéderez à deux livraisons, à la manière agile. Chacune doit fournir une tâche par personne qui se résume raisonnablement simplement et a été approuvée au préalable. Vous êtes encouragés à me montrer votre avancement au fur et à mesure des séances.
+
+. Livraison 1 : fin du dimanche 18 mai
+. Livraison 2 : fin du dimanche 22 juin
+
+Créez, à la racine de votre projet, un fichier 2025.adoc avec une section Livraison 1 et (au moment de la seconde livraison) une section Livraison 2. Chaque section contiendra une liste des noms d’utilisateurs GitHub des participants au projet avec pour chacune les commits qui représentent sa tâche. Ces commits doivent avoir votre nom d’utilisateur pour auteur.
+
+Concrètement, vous livrerez en livrant une branche `release-x` (x = 1 ou 2). Le commit que la branche désigne au moment de la limite de temps est la version livrée.
+Vos commits doivent être des ancêtres de ce commit. Chaque contributeur est responsable de la fonctionnalité du tout (il ne faut pas que votre contribution casse celle d’autrui).
+
+Chaque tâche doit s’accompagner d’une documentation compacte (c-à-d succincte et éclairante), intégrée à la documentation existante, expliquant la structure et le fonctionnement de vos contributions. Des diagrammes de classe au format plantuml sont appréciés si opportuns.
+Vos notes seront individuelles et reflèteront vos contributions telles qu’indiquées dans les responsabilités.
+
+Je jugerai entre autres des aspects suivants, selon ce qui est applicable. Les intervalles de pondération sont approximatifs. Vous recevrez une appréciation informelle à l’issue de la livraison 1, qui aura pour but uniquement de vous guider (ou une pénalité sur votre note finale si vous ne livrez pas au moins un descriptif des tâches envisagées). Vous recevrez une note seulement à l’issue de la livraison 2.
+
+* Découpe conceptuelle, contrat : clarté des interfaces, javadoc appropriée (jusqu’à 10/20)
+* Implémentation technique : algorithmes appropriés, code en anglais compréhensible, programmation défensive (jusqu’à 7/20)
+** Si vous modifiez du code existant, vous êtes responsable d’améliorer raisonnablement le code qui l’entoure là où c’est facile, de corriger les bugs évidents. Ne vous dédouanez pas d’erreurs évidentes sous prétexte que ce n’est pas vous qui avez écrit telle ligne de code.
+** Privilégier des collections (List, Set, etc.) plutôt que des tableaux de types primitifs. Cela simplifie généralement l’extension future, et clarifie le code. Choisissez bien vos collections !
+* Java (jusqu’à 6/20)
+** Génériques appropriés
+** Interfaces appropriées
+** Usage des collections
+* Couverture de tests (non nécessairement unitaires), qui doivent couvrir seulement et effectivement les aspects non triviaux (jusqu’à −8/20 sinon)
+* Usage approprié de bibliothèques (jusqu’à −3/20 sinon)
+** Vous devez utiliser autant que possible les technologies https://github.com/oliviercailloux/java-course/blob/main/Libs.adoc[recommandées dans ce cours] ou, sans autre précision, les standards ISO, W3C et JSR Java (JSON-P ou Jackson par exemple).
+** Ne réinventez pas la roue ! Cela augmente votre base de code, donc rend la maintenance plus difficile. Réutilisez les bibliothèques existantes. Si le problème que vous souhaitez résoudre est raisonnablement commun, il existe sûrement une bibliothèque de bonne qualité prête à être réutilisée.
+* POM Maven correct (jusqu’à −3/20 sinon)
+* Doc (jusqu’à 5/20)
+** UML doc correct
+** Correspondance de la doc avec le code (complétude, compacité)
+
+La dernière séance sera l’occasion d’une présentation de votre approche et logiciel à la classe. Un vote pour le meilleur logiciel s’ensuivra.
+
+Voici encore quelques instructions et conseils généraux.
+
+* Découpez vos ajouts en tâches simples. Exemple : coder une classe pour enregistrer des commandes de produit, plutôt que coder un GUI qui permet de commander des produits.
+* [[SEP]] Je dois voir vos changements facilement et les distinguer de code auto-généré ou importé sans changements de votre part et de simples modifications de formatage. Si par exemple vous ajoutez un canevas HTML de 100 fichiers, ou si vous modifiez le formatage du code, faites-le dans une branche dédiée, et créez une autre branche pour vos modifications de contenu (SEP).
+* [[PLAGIAT]] Ne https://fr.wikipedia.org/wiki/Plagiat[plagiez] pas ! Lorsque vous intégrez du code d’autrui, il faut indiquer _clairement_ que le code n’est pas de vous, et sa provenance. Par exemple, mentionner dans le README de votre projet la provenance de votre template html. Ou, indiquer la provenance dans la javadoc d’une méthode copiée depuis StackOverflow. Cette règle ne s’applique pas si vous ne copiez que quelques lignes de code triviales.
+* L’usage de moteurs de langue (type Chat GPT) pour vous aider est encouragé. Attention, ces moteurs peuvent être très utiles mais sont aussi très forts pour vous https://www.youtube.com/watch?v=R2fjRbc9Sa0[induire en erreur]. Ne les croyez jamais sur parole. Documentez votre usage de ces moteurs. Un usage efficace sera récompensé.
+
+== Démarrage
+Une personne de votre groupe doit effectuer les étapes suivantes pour initialiser le projet.
+
+* Clonez le projet dont vous partez sur votre machine pour créer un dépôt local contenant l’historique actuel du projet.
+** Utilisez la commande `git remote` pour renommer le « remote » `origin` en `cailloux` sur votre dépôt local.
+** Utilisez la commande `git remote` pour ajouter le nouveau « remote », que vous avez créé en créant votre équipe projet, à votre dépôt local, nommez-le `origin`.
+
+Chaque membre doit ensuite cloner le projet ainsi créé sur sa machine locale.
+
+Prenez le temps de réfléchir ensemble globalement au projet et tracez les grandes lignes de votre ambition à la fin de l’année. 
+Ceci est utile pour construire un sens commun de votre objectif global.
+Inutile d’élaborer un plan détaillé ! 

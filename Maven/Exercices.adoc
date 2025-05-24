@@ -1,0 +1,50 @@
+= Maven
+:sectanchors:
+
+Simple exercices for Maven. The reader is supposed to know already the basics of Maven (see slides in this course).
+
+// * Add a dependency to the latest version of the https://www.eclipse.org/jgit/[`jgit`] library (which permits to programmatically access the content of a git repository) that is in Maven Central. You have to find the right Maven coordinates. Commit into your branch (so that your commit has the starting commit as parent).
+
+== Default sample project
+In this exercice we will use an archetype called `maven-archetype-quickstart`, that allows us to generate a basic project.
+
+* Open a terminal. Move into a directory into which you want to put your new project (which will be created as a sub-directory).
+* Type `mvn org.apache.maven.plugins:maven-archetype-plugin:3.1.2:generate`. 
+
+The command `mvn` followed by “groupId:pluginId:version:goal” runs Maven with the given goal, defined in the given plugin.
+Thus, this command simply executes the goal `generate` in the Maven plugin with id https://search.maven.org/artifact/org.apache.maven.plugins/maven-archetype-plugin[`maven-archetype-plugin`] published under the groupId `org.apache.maven.plugins`.
+
+The command displays a long list of archetypes available to you. Then you see something like “Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): 1388:”. (You will see a different number.)
+
+* You are supposed to either provide a number; provide a filter; or accept the default answer.
+* The default answer, if any, is always given just before the last colon, in this example it is 1388.
+* In this exercice, we will rather use the filter to make sure we select the plugin we want. To use a filter, just enter (a part or the whole of) the artifactId of the desired archetype. Then a “case senstive contains” search is run, meaning simply that Maven will list all the archetypes whose artifactId contains the string you entered.
+
+We’ll start by using the archetype having groupId and artifactId `org.apache.maven.archetypes:maven-archetype-quickstart`.
+
+* Find this one by using the filter in the command line, then select it using its number.
+* Consider the next question. What is the default answer? We want to accept the default, so we just press ENTER.
+* Answer the remaining questions, either by accepting the default answers when they seem reasonable, or by providing your own answers.
+
+Your project gets created in a sub-directory of your current position.
+
+* Which files has Maven created? What are their purpose?
+* In the terminal, move into the newly created project.
+* Type `mvn compile`. What does it do, and why (how does it work)? Is `compile` a phase, or a plugin goal (http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference[answer])?
+* What has changed in your project directory?
+* Run the compiled application from the shell (go into the `target/classes` directory and use the _full name_ of the class you want to run). What does it do?
+
+== Modern project
+Let’s now use a different archetype to generate a project better suited for our future use.
+
+* Move into the directory of your choice to prepare for the new project creation.
+* Use the appopriate command to trigger the archetype `generate` goal again.
+* This time, use the `io.github.oliviercailloux:java-archetype` archetype.
+* Answer the required questions.
+
+Your project gets created in a sub-directory of your current position.
+
+* What changed, compared to the previous project? Compare in particular both `pom.xml` files: what changed? What will be the effect of those changes?
+* Compare your answer to the https://github.com/oliviercailloux/java-archetype[documentation].
+
+Finally, import your project in your IDE.

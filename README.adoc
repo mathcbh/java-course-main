@@ -1,0 +1,20 @@
+= Java Course
+:toc-placement: preamble
+:sectanchors:
+
+image::.github/Links%20check.svg["Links check status", link="https://github.com/oliviercailloux/java-course/blob/main/.github/Last%20results.json"]
+
+An open source Java course taught at https://dauphine.psl.eu/formations/masters/informatique/1re-annee-de-master-miage/programme[Dauphine].
+
+== L3
+The https://github.com/oliviercailloux/java-course/blob/main/L3/README.adoc[entry page] for the L3 course.
+
+== Free navigation
+The content is organized so as to permit browsing freely by topic of interest (prerequisites are indicated when required).
+
+Look into the various `.adoc` files and sub-folders, depending on your interest.
+
+== Reuse
+Please drop me an e-mail if you use (some of) this content (the license permits you to re-use the content without asking or telling me however).
+
+PRs are welcome if you want to share any possible correction or improvement. Or open an https://github.com/oliviercailloux/java-course/issues[issue].

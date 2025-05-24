@@ -1,0 +1,169 @@
+\RequirePackage[l2tabu, orthodox]{nag}
+\RequirePackage{silence}
+\documentclass[english, french]{beamer}
+\input{preamble/packages}
+\input{preamble/redac}
+\input{preamble/math_basics}
+\input{preamble/math_mine}
+\input{preamble/jdoc}
+\input{preamble/draw}
+\input{preamble/uml}
+\input{preamble/refAPIcmds}
+%\jdocRef{java.util/Random} \jdocRef{java.util/Random\#ints()} \jdocRef[show parameters]{java.util/Random\#doubles(double, double)} 
+
+\setbeamertemplate{headline}[singleline]
+\setbeamertemplate{footline}[onlypage]
+
+\title{Notions d’objet en Java}
+\subtitle{}
+\subject{Java}
+\keywords{JVM}
+\author{Olivier Cailloux}
+\institute[LAMSADE]{LAMSADE, Université Paris-Dauphine}
+\date{Version du \today}
+
+\begin{document}
+\bibliographystyle{apalike}
+
+\begin{frame}[plain]
+	\tikz[remember picture,overlay]{
+		\path (current page.south west) node[anchor=south west, inner sep=0] {
+			\includegraphics[height=1cm]{LAMSADE95.jpg}
+		};
+		\path (current page.south) ++ (0, 1mm) node[anchor=south, inner sep=0] {
+			\includegraphics[height=9mm]{Dauphine.jpg}
+		};
+		\path (current page.south east) node[anchor=south east, inner sep=0] {
+			\includegraphics[height=1cm]{PSL.png}
+		};
+	}
+   \titlepage
+\end{frame}
+\addtocounter{framenumber}{-1}
+
+\section{Deux rôles}
+\begin{frame}
+	\frametitle{Deux rôles des classes}
+	\begin{itemize}
+		\item Classe : conteneur à variables et méthodes statiques
+		\item Mais peut aussi être considérée comme un \emph{type} : spécification, modèle, moule à objets
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Rôle 1 : Conteneur statique}
+	\begin{itemize}
+		\item Classes regroupent des variables et sous-routines statiques
+		\item Permet d’\emph{organiser} et de \emph{nommer}
+		\item \texttt{Math.\href{https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Math.html\#sqrt(double)}{sqrt}(Math.PI);}
+		\item Méthode \texttt{sqrt} statique dans classe \texttt{Math}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Rôle 2 : Moule à objets}
+	\begin{itemize}
+		\item Classe : moule à objets, appelée type de l’objet
+		\item Objet : instance de classe
+		\item Exemple : classe \texttt{Car} modélise une voiture
+		\item Objet correspondant est une voiture donnée (de type \texttt{Car})
+		\item Classe déjà utilisée dans ce cours ? \onslide<2->{\jdocRef{java.base/java.lang/String}, Objet : \texttt{"blah"}}
+%		\item Classe \jseref{java.util/Scanner}, Objet \texttt{scanner} utilisé pour récupérer le texte entré par l’utilisateur
+	\end{itemize}
+\end{frame}
+
+\section{Création}
+\begin{frame}
+	\frametitle{Création d’objets}
+	\begin{enumerate}
+		\item Via \emph{constructeur} : \texttt{new} + nom de la classe
+		\begin{itemize}
+			\item \texttt{Random r = new Random();}%\jdocRef{java.base/java.lang/Random()};}
+			\item \texttt{IllegalArgumentException exc1 = new IllegalArgumentException("Must be positive.");}
+			\item \texttt{IllegalArgumentException exc2 = new IllegalArgumentException("Must be negative.");}
+		\end{itemize}
+		\item \only<1>{???}\onslide<2->{
+			Via une méthode
+			\begin{itemize}
+				\item \texttt{Instant now = Instant.now();}%\jdocRef{java.base/java.time/Instant\#now()};}
+				\item \texttt{String ten = String.valueOf(10);}
+			\end{itemize}
+			\item Via une variable statique: \texttt{DateTimeFormatter formatter = DateTimeFormatter.ISO\_DATE}
+			\item Syntaxe particulière pour instances de \texttt{String} : \texttt{String s = "Coucou";}
+		}
+	\end{enumerate}
+\end{frame}
+
+\section{Usage}
+\begin{frame}
+	\frametitle{Usage des objets}
+	\begin{itemize}
+		\item Classes définissent des méthodes
+		\item \texttt{String s1 = "a";}
+		\item \texttt{String s2 = "Coucou";}
+		\item Différents objets, mais de même type
+		\item Méthodes non statiques ont un comportement différent en fonction de l’instance
+		\item \texttt{s1.toUpperCase()} ⇒ \texttt{"A"}
+		\item \texttt{s2.toUpperCase()} ⇒ \texttt{"COUCOU"}
+		\item \texttt{e1.getMessage()} ⇒ \texttt{"Must be positive."}
+		\item \texttt{e2.getMessage()} ⇒ \texttt{"Must be negative."}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Égalité}
+	Attention au test d’égalité :
+	\begin{itemize}
+		\item[\mkkOK] utiliser \texttt{s1.equals(s2)} (teste l’égalité sémantique)
+		\item[\mkkNO] et \emph{pas} \texttt{s1 == s2} (teste l’égalité des références)
+	\end{itemize}
+\end{frame}
+
+\section{Scanner}
+\begin{frame}
+	\frametitle{Scanner}
+	\begin{itemize}
+		\item \texttt{Scanner stdin = new \jseref[omitfqname]{java.util/Scanner\#Scanner-java.io.InputStream-}(\jseref{java.lang/System\#in});}
+		\item \texttt{String userName = stdin.\jseref[omitfqname]{java.util/Scanner\#nextLine--}();}
+	\end{itemize}
+\end{frame}
+
+\appendix
+
+\section{Licence}
+\begin{frame}
+	\frametitle{Licence}
+	Cette présentation, et le code LaTeX associé, sont sous \href{https://opensource.org/licenses/MIT}{licence MIT}. Vous êtes libres de réutiliser des éléments de cette présentation, sous réserve de citer l’auteur.
+	
+	Le travail réutilisé est à attribuer à \href{https://www.lamsade.dauphine.fr/~ocailloux/}{Olivier Cailloux}, Université Paris-Dauphine.
+\end{frame}
+\end{document}
+
+\begin{frame}
+	\frametitle{}
+	\begin{itemize}
+		\item 
+	\end{itemize}
+	\begin{block}{}
+		
+	\end{block}
+\end{frame}
+
+\section{Bibliographie}
+\begin{frame}[allowframebreaks]
+	\frametitle{Bibliographie}
+	\def\newblock{\hskip .11em plus .33em minus .07em}
+% 	\bibliography{zotero}
+\end{frame}
+
+\section{Autres}
+\begin{frame}
+	\frametitle{}
+	\begin{itemize}
+		\item 
+	\end{itemize}
+	\begin{block}{}
+		
+	\end{block}
+\end{frame}
+\end{document}

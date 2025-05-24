@@ -1,0 +1,65 @@
+= Eclipse
+
+For this course you will need the https://www.eclipse.org/downloads/packages/[Eclipse IDE] “for Java Developers” (2022-06 version or more recent).
+
+== Basics
+To exploit the power of Eclipse, at the very minimum, you must understand the notion of perspectives and views, and know how to easily navigate within resources.
+
+In the Workbench User Guide, https://help.eclipse.org/latest/topic/org.eclipse.platform.doc.user/gettingStarted/qs-02a.htm[Basic tutorial], follow the first few sections of the tutorial: `The Workbench`, `Editors and views`, `A simple project`, `Closing an editor` and `Navigating resources`; then read `Rearranging views and editors`. (Click on the plus icon to read the subsections.)
+
+== Basic exercices
+
+* In the `Resource` perspective, open the `Error Log` view
+* Switch to the `Java` perspective; open the `Javadoc` and the `Problems` views
+* Clone the the https://github.com/JodaOrg/joda-money[Joda-Money] repository
+* Import it into Eclipse using `File` / `Open Projects from File System` (you may cancel the step about maven plugin setup)
+* Go directly to the class `Money` using a keyboard shortcut that you just learned, then, using the relevant view (which one?)
+* Using the `Outline` view, go to the method `convertedTo`
+* Focus on the text `withCurrencyScale`, in the method implementation. Make sure your `Javadoc` view shows the documentation of that method.
+
+== Eclipse & Java
+To code efficiently in Java within Eclipse:
+
+* Use Outline view
+* Use Problems view
+* Use Javadoc view
+* Use content completion with CTRL+Space
+* Use Organize imports (from an editor, select `Source` / `Organize Imports`)
+* Use automatic code formatting (from an editor, select `Source` / `Format`)
+
+Check this very clear https://www.vogella.com/tutorials/Eclipse/article.html[tutorial from vogella] for the basics of using Eclipse with Java, including explanations about the points here above. Read up to section 16 included as well as sections 21 and 22.
+
+[[Eclipse-strict]]
+== Configuration
+Configure Eclipse to show more errors and warnings in order to help spot mistakes and code smells early (and add a “GoogleStyle patched” formatter style).
+
+* From Eclipse, import this https://raw.githubusercontent.com/oliviercailloux/java-course/master/Dev%20tools/Eclipse-prefs.epf[epf] (Eclipse Preference File) (save it on your computer first), with `File` / `Import…` / `General` / `Preferences`.
+** You can look at the text in the file to see what this changes to your Eclipse configuration.
+* Check in `Windows` / `Preferences` whether the changes were applied. For example, check in `Java` / `Code Style` / `Code Templates` that the `Catch block body` contains `throw new IllegalStateException(e);`.
+* Check in your project properties, `Java Compiler` / `Errors/Warnings` that the project uses your global Eclipse compiler settings.
+* Clean and recompile your project to see the effect.
+* Check that the instruction `ArrayList<String> l = new ArrayList<String>();` raises a warning (“Redundant specification of type arguments <String>”).
+
+This is stored in your Eclipse workspace, thus, if you change workspace, you need to import these settings again.
+
+.Some details about these settings
+[%collapsible]
+====
+* As an exception to strict checking, I authorize boxing and unboxing without warnings. This is because first, the warning has drawbacks and second, it is not very effective. First, this warning sometimes encourage writing more obscure code, for example `myMap.put(Integer.valueOf(myInt), myValue)` instead of `myMap.put(myInt, myValue)`. (And stuffing your code with `@SuppressWarnings("boxing")` instructions is equally inelegant.) Second, this warning only helps avoiding possible null pointer exceptions (when unboxing), and this anyway is a problem that happens when dealing with objects. It feels unjustified to spend so much energy on this risk specifically when dealing with numeric types.
+* https://github.com/oliviercailloux/Relaxed-google-style/blob/master/Eclipse.adoc[Some details about the formatter style].
+====
+
+== Start project
+To start a Java project, use `File` / `New` / `Java Project`, give it a name, then in the next page, uncheck `Create module-info.java file`. If you forgot to uncheck this, you should delete that file (we use the simpler class path mechanism in this course, see https://github.com/oliviercailloux/java-course/blob/main/Execution/README.adoc#modules[here] for references about the module path).
+
+== Train
+To train with graded exercices about Java, accept https://classroom.github.com/a/JvkchND3[this assignment], clone the resulting repository, import it in Eclipse, modify the method `App#sayHello()`, run the code to check that it works, and push your changes. Check that you see them online.
+
+== More doc
+Read the following (a piece at a time), for a great increase to your productivity and pleasure of coding.
+
+* Workbench User Guide, https://help.eclipse.org/latest/topic/org.eclipse.platform.doc.user/gettingStarted/qs-02a.htm[Basic tutorial]
+* Workbench User Guide, https://help.eclipse.org/latest/topic/org.eclipse.platform.doc.user/tips/platform_tips.html[Tips and Tricks]
+* Java development user guide, https://help.eclipse.org/latest/topic/org.eclipse.jdt.doc.user/gettingStarted/qs-2.htm[Basic tutorial]
+* Java development user guide, https://help.eclipse.org/latest/topic/org.eclipse.jdt.doc.user/tips/jdt_tips.html[Tips and Tricks] (JDT)
+

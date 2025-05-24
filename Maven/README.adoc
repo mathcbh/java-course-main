@@ -1,0 +1,25 @@
+= Maven
+
+Prerequisites: install https://maven.apache.org/download.cgi[Maven] (https://stackoverflow.com/questions/8826881/maven-install-on-mac-os-x[this] might be useful for Mac OS; I didn’t test it). Then (under Windows), https://superuser.com/q/284342[set the PATH variable] as indicated on the install page. (Look at https://github.com/oliviercailloux/java-course/blob/8f61ac1a6cdc1c9b00237e1a1f26e947d5b26e58/Best%20practices/Various.adoc#installing-the-jdk[this previous version] for details about the required environment variables.)
+
+See https://github.com/oliviercailloux/java-course/raw/main/Maven/Pr%C3%A9sentation/presentation.pdf[présentation].
+
+In the https://github.com/oliviercailloux/java-course/blob/main/Maven/Exercices.adoc[exercices], we learn about starting Maven projects from archetypes.
+
+See also: https://github.com/oliviercailloux/java-course/blob/main/Maven/Best%20practices.adoc[best practices]. 
+
+When you’re ready, publish your open source artifacts to https://github.com/oliviercailloux/java-course/blob/main/Maven/Maven%20central.adoc[Maven central]!
+
+== References
+* Simple, recommended https://github.com/oliviercailloux/java-archetype/blob/master/src/main/resources/archetype-resources/pom.xml[POM]
+* https://maven.apache.org/guides/getting-started/index.html[Tutorial] Apache Maven
+* https://books.sonatype.com/mvnref-book/reference/index.html[Book] Maven: The Complete Reference
+* https://books.sonatype.com/mvnex-book/reference/index.html[Book] Maven by Example
+* Apache http://maven.apache.org/guides/[website]
+* Apache Maven Cookbook, Raghuram Bharathan, 2015
+* Archetypes: http://maven.apache.org/archetype/maven-archetype-plugin/usage.html[maven-archetype-plugin]
+//* Packaging
+* Assemblies: http://maven.apache.org/plugins/maven-assembly-plugin/[maven-assembly-plugin]
+//== Refs
+//* http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging
+

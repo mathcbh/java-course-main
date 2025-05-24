@@ -1,0 +1,62 @@
+= Git
+
+Prerequisites:
+
+* Install https://git-scm.com/download[git].
+* We will start learning with the command line interface of git. If you are not used to using a shell, read the https://github.com/oliviercailloux/java-course/blob/main/Git/Shell.adoc[Shell] document.
+Under Windows, use Git BASH which provides completion. (Power users may prefer to use https://www.develves.net/blogs/asd/articles/using-git-with-powershell-on-windows-10/[PowerShell] with posh-git.)
+
+Then see:
+
+* https://raw.githubusercontent.com/oliviercailloux/java-course/main/Git/Pr%C3%A9sentation/presentation.pdf[présentation] (or read below), 
+* https://github.com/oliviercailloux/java-course/blob/main/Git/README.adoc#configure-git[configure] git,
+* https://github.com/oliviercailloux/java-course/blob/main/Git/Step-by-step.adoc[step-by-step exercices], 
+* https://github.com/oliviercailloux/java-course/blob/main/Git/Git%20branching%201.adoc[Git branching 1], https://github.com/oliviercailloux/java-course/blob/main/Git/Git%20branching%202.adoc[Git branching 2],  https://github.com/oliviercailloux/java-course/blob/main/Git/Git%20branching%203.adoc[Git branching 3]
+* https://github.com/oliviercailloux/java-course/blob/main/Git/Best%20practices.adoc[best practices].
+
+== Learning the basics
+There are two ways to learn the basics of Git: the frustrating and long way, and the nice and short way. The frustrating and long way is the one you find yourself into if you do not read anything about git (because you do not have time) and just try to deal with it by running commands that you found on the web, that you do not fully understand, that you supposed would achieve just what you need, and that instead created a mess that you ignore how to repair.
+
+To save time, read the https://git-scm.com/book[Pro Git] book. For the basics, you really only need to read the following sections.
+
+* https://git-scm.com/book/en/v2/Getting-Started-What-is-Git%3F[1.3] What is Git?
+* https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup[1.6] Getting Started - First-Time Git Setup
+* https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository[2.1] Getting a Git Repository
+* https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository[2.2] Recording Changes to the Repository
+* https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History[2.3] Viewing the Commit History
+* https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes[2.5] Working with Remotes
+* https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell[3.1] Git Branching - Branches in a Nutshell
+* https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging[3.2] Git Branching - Basic Branching and Merging
+* https://git-scm.com/book/en/v2/Git-Branching-Remote-Branches[3.5] Git Branching - Remote Branches
+
+Hint: do not try to remember all the shortcut commands and options git provides. You just need those ones: `git config --global …` (just for the initial configuration); `git clone <url>` or `git init` to start the fun; `git status`, `git diff`, `git add <files>`, `git commit` and `git merge` to enrich your local history; `git branch <name>` to create branches; `git log` and `git checkout <branch/commit>` to navigate your history; `git fetch` and `git push` to synchronize with your remote repository. You can learn the rest when and if you need it.
+
+== Configure git
+Git can be configured by associating string values to “options”. 
+An option can be configured locally (for a given repository) or globally (for every time you use git on that system).
+
+* Type `git config --global --list` to see which options are currently configured globally (you will see an (almost) empty list if you haven’t configured anything yet)
+
+Here we want to associate your name as a value to the option `user.name`. 
+Git will use this to sign your commits.
+
+* Type `git config --global --get user.name` to see the value currently associated to the option `user.name` (which will probably be empty at first)
+* Type `git config --global --add user.name MyUserName` to associate the value `MyUserName` to the option `user.name`
+* Check again the value currently associated to the option `user.name`
+
+For more info: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup[initial setup]; GitHub usage of https://docs.github.com/en/get-started/getting-started-with-git/setting-your-username-in-git#about-git-usernames[`user.name`] and https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/setting-your-commit-email-address[`user.email`]
+
+== About authentication on GitHub
+Authentication fails if you use your GitHub password. You must use a personal access token instead. See https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories#cloning-with-https-urls[Cloning with HTTPS URLs], follow the instructions to create a “fine-grained personal access token”.
+
+== References
+* The git https://github.github.com/training-kit/[Cheat sheets],
+* The https://git.wiki.kernel.org/index.php/Git_FAQ#Why_the_.27Git.27_name.3F[git name].
+* Learn Git Branching https://learngitbranching.js.org/[tutorial] and https://learngitbranching.js.org/?NODEMO[free play] (https://onlywei.github.io/explain-git-with-d3/[alternative])
+// alternative: https://git-school.github.io/visualizing-git/[visualizing-git], but flaws (master, git checkout, HEAD pointer unclear)
+* https://git-scm.com/[Git-SCM]: Videos; Cheat Sheets; Book https://git-scm.com/book[Pro Git] (free, as in speech and beer)
+* Videos (I haven’t watched any of those): see https://git-scm.com/videos[Git-SCM videos]; https://www.git-tower.com/learn/git/videos[Videos by Tower]
+* Working with git: A quick and useful https://guides.github.com/introduction/flow/[guide] about workflow on GitHub; a branching https://nvie.com/posts/a-successful-git-branching-model/[model]; prefer https://longair.net/blog/2009/04/16/git-fetch-and-merge/[fetch then merge] to pull; http://think-like-a-git.net/sections/testing-out-merges/the-scout-pattern.html[the scout pattern] for merging
+* GUIs: I recommend using the one integrated with your IDE; other options include https://git-cola.github.io/[Git Cola] (in particular `git-cola dag`); I’ve been recommended https://www.gitkraken.com/[GitKraken] (but it is https://www.gitkraken.com/pricing#git-gui-features[only free for public repos]; or through https://help.gitkraken.com/gitkraken-client/gitkraken-edu-pack/[GitHub Student Pack])
+//* Git https://stevelosh.com/blog/2013/04/git-koans/[Koans] (and some https://news.ycombinator.com/item?id=5512119[explanation])
+

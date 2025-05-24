@@ -1,0 +1,18 @@
+= Git branching 1
+
+A modified version of a graded exercice that was given a few years ago.
+
+* https://docs.github.com/en/get-started/quickstart/fork-a-repo[Fork] https://github.com/oliviercailloux/google-or-tools-java[this project] and clone your version locally.
+* Check out the commit whose SHA-1 identifier _ends_ with `6a341`. We will call this the “starting” commit.
+* Create and switch to a new branch, `my-branch`, departing from the starting commit.
+* Change something in the `pom.xml` file. Commit into your branch (so that your commit has the starting commit as parent).
+* Bring the changes of the commit that originally followed the starting commit into `my-branch` (by merging).
+* Do not forget to send all your commits and your branch to the GitHub repository. Check that you see them online.
+
+You will be graded as follows.
+
+* One of the commits that you created must have the starting commit as parent, and be an ancestor of the final position of `my-branch`.
+* One of the commits that you created must have two parents: a commit that you created; and one that you did not create; both parents having as parent the starting commit. The commit must be the final position of the branch `my-branch`, or be an ancestor of it.
+* You must have changed the pom in your commit that has the starting commit as a parent.
+* Commits created using the GitHub web site do not count.
+

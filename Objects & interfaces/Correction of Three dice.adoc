@@ -1,0 +1,7 @@
+= Correction of exercice Three dice
+
+* rollOneDie must throw if die number invalid
+* better interface: getDie(int die), must also throw argument if die number invalid
+* Javadoc must mention what happens if I don’t roll and ask for a die. Example of a consistent explanation and behavior: Javadoc of the class indicates that “A die must be rolled before calling #getDie().”, Javadoc of the method getDie(int) (or of the methods getFirstDie, …) indicates “@throws IllegalStateException if the die is not rolled before calling”, and the code of getDie() indeed throws an IllegalStateException if the die is not rolled before calling.
+* DiceUser: rollOnce must be static
+

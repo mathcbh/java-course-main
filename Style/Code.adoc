@@ -1,0 +1,61 @@
+= Formatting and commenting code
+
+== Follow the Google Java Style Guide
+I recommend following the http://google.github.io/styleguide/javaguide.html[GJSG]: Google Java Style Guide! It is a well designed set of guidelines.
+Most importantly:
+
+* GJSG http://google.github.io/styleguide/javaguide.html#s5.2-specific-identifier-names[5.2], Rules by identifier type
+* GJSG http://google.github.io/styleguide/javaguide.html#s2.2-file-encoding[2.2], File encoding: UTF-8
+* “Tip: Never make your code less readable simply out of fear that some programs might not handle non-ASCII characters properly. If that should happen, those programs are broken and they must be fixed.” (GJSG http://google.github.io/styleguide/javaguide.html#s2.3.3-non-ascii-characters[2.3.3])
+
+I disagree with this point in the GJSG: http://google.github.io/styleguide/javaguide.html#s5.2.1-package-names[5.2.1], “Package names are all lowercase, with consecutive words simply concatenated together (no underscores)”. I use underscores to separate words in packages (see https://github.com/oliviercailloux/java-course/blob/main/Maven/Best%20practices.adoc[Maven]).
+
+== Formatting
+Use your IDE mechanisms to format your source code systematically and automatically.
+(For example, see https://github.com/oliviercailloux/Practical-Google-style/blob/master/Eclipse.adoc[this] for configuring Eclipse to follow the GJSG.)
+Make sure everybody use the same conventions in your team. This reduces the number of conflicts when merging concurrent modifications; and ensures that git comparison works (otherwise, for example, git sees modifications when only the spaces have been changed to tabs, and thus the meaningful changes become hard to find).
+
+If you modify an existing project, make sure you use the same formatting conventions as the existing project, or start with re-formatting everything systematically if you want to change the conventions.
+
+Similarly, make sure you use only one encoding for end of lines throughout your team (either `\n` or `\r\n`). Otherwise, git will see differences where in reality only the end of line has changed.
+
+== No code disabled using comments
+Do not use comments to comment out code (`//object.someMethod()`), unless very temporarily when trying out something. This hinders readability and increases the length of the code, and quickly becomes completely unuseful as commented code accumulate. Use https://github.com/oliviercailloux/java-course/blob/main/Git/Best%20practices.adoc#no-old-files[this] strategy, if appropriate. Code commented out should not reach your git repository.
+
+== Javadoc for externally visible comments
+Use Javadoc to document your contracts or usage of your classes and methods: Javadoc is for comments that the *users* of your code should see.
+
+If your comments are general comments about your class (its goal, how to use it, general restrictions…), it should go on top of the class. Comments on a constructor should only explain what is specific to that constructor.
+
+A Javadoc style comment that is not inside a method is considered as bound to the element that just follows the comment (you can see this by looking at the Eclipse Javadoc view). In other words, a comment inside a class comments either a method or a field of the class, unless it is inside a method. Avoid free-floating comments that should be attached to nothing in particular (perhaps your comment belongs to the class header?)
+
+Omit tags that you have nothing to say about, at least in a draft version of your API. For example, it is often reasonable to omit `@throws IOException` tag.
+
+Omit comments that bring no information: they hide the important comments and use your precious time. For example, do not add Javadoc on `getFirstName()` if it simply reads: `Returns the first name`. Omitting the Javadoc entirely is better, if the method is clear from its header, at least in a draft version of your API.
+
+Get inspiration from well written documentation such as the one on https://docs.oracle.com/en/java/javase/13/docs/api/java.base/java/util/List.html[`List`].
+
+== Use “bloc” style comments for internal comments
+Use “bloc” style comments to comment your code, when the comment is useful only for the *programmer* of the class or method which it comments : `/* This explains the code that follows. */`. Put the comment just before the code that it comments (not next to it as the auto-formatter will generally make it hard to read), in the relevant method, or in the constructor if it is an internal comment about the whole class. Bloc style is used for multi-line comments that contain free-flowing text, which your IDE will thus reformat to respect margin boundaries. On the contrary, C-style comments (`//comment`) are normally used to disable code (which you should not do, see above). Your IDE will typically consider itself not authorized to reformat C-style comments by changing the line feed characters.
+
+== Spaces rather than tabs
+Google style recommends indenting with spaces rather than tabs. Here is the rationale leading me to generally use this strategy (the argument applies not specifically to Java but also to HTML, CSS, JavaScript, Python, …).
+
+Here is a slight advantage of spaces over tabs: “Single accidental spaces at the beginning of line - when using tabs - may not be visible in the IDE and can sneak out to repository. If a couple of people work on same file it is highly possible to generate unnecessary conflicts. Using spaces instead of tabs makes it possible to easily catch such an accidental space on eyeball” --  https://stackoverflow.com/q/35649847[SO]. This can of course be overcome with proper IDE configuration, but some people use simple text editors or will not configure their tools properly; and simpler is better, all other things equal.
+
+Here is a stronger argument in favor of spaces. It makes sense that everybody use (and get used to, see point 4 of https://stackoverflow.com/a/35649925[this argument]) the same visual indent. 
+This increases the chance of being able to easily share code screenshots or screencasts, tools, configuration, advice, and so on, with fellow developers. 
+This is generally accepted as good practice within a team of developers, but also holds at the worldwide level, as sharing also happens with wide audiences on the internet.
+It is therefore good to encourage conventions that recommend precise visual indentation rules, in order to maximize the number of developers sharing a habit concerning visual indents.
+
+This point about standardization of visual indents argues in favor of spaces for two reasons.
+First, it renders the usual argument for using tabs over spaces ineffective. The usual argument says that tabs is semantic indentation, which enables each developer to more easily see whatever amount of space they want. That is true, but not desirable. (There is another reason that makes this usual argument weak. Indentation with tabs still require to take a decision on _relative_ indentation. For example, the Google Java Style Guide requires to indent blocks with https://google.github.io/styleguide/javaguide.html#s4.2-block-indentation[two spaces] but continuation lines with https://google.github.io/styleguide/javaguide.html#s4.5.2-line-wrapping-indent[four spaces]. Indenting, say, blocks with one tab (or, more generally, with _x_ tabs) and continuation lines with two tabs (or _y_ tabs) anyway reduces significantly the lattitude of those who view the code: whatever their choice for “visual amount of space per tab”, they will have to see twice more (or _x / y_ more) indent for continuation lines.)
+
+Second, there seems to be a https://hoffa.medium.com/400-000-github-repositories-1-billion-files-14-terabytes-of-code-spaces-or-tabs-7cfe0b5dd7fd[vast majority] of developers actually using spaces rather than tabs (for the languages listed here above). While this does not mean they all share the same precise visual indentation preference for a given language, this is at least a de facto standard on which we’d rather build to benefit partly from the positive effects listed here above such as ease of sharing configuration, if we have no strong reason to diverge.
+
+== Outdated references
+* https://www.oracle.com/java/technologies/naming-conventions.html[Oracle J2EE] (I don’t think this should be taken seriously as it is very old, apparently unmaintained, and not included in recent documentation of Oracle).
+* Code https://www.oracle.com/java/technologies/javase/codeconventions-contents.html[Conventions] for the Java Programming Language contains many https://www.javacodegeeks.com/2012/10/java-coding-conventions-considered-harmful.html[incorrect] suggestions
+
+
+

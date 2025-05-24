@@ -1,0 +1,126 @@
+= Objects, interfaces and generics
+
+Prerequisites: contract and fail fast.
+
+See: https://github.com/oliviercailloux/java-course/raw/main/Objects%20%26%20interfaces/Pr%C3%A9sentation/presentation.pdf[présentation]; or read https://math.hws.edu/javanotes/c5/[ES5] intro to 5.4. See also https://www.lamsade.dauphine.fr/~airiau/Teaching/L3-Java/cours5.pdf[Airiau C5].
+
+== Instance variables and methods: syntax
+See https://github.com/oliviercailloux/java-course/blob/main/Syntax/Classes%20as%20concept.adoc[Classes as concept] for the syntax about instance variables and instance methods
+
+== Exercices from the book
+
+* https://math.hws.edu/javanotes/c5/exercises.html[EE5.1], 5.2
+* EE5.3 [I]
+// ** Supplementary requirement: you will archive `PairOfDice` and `StatCalc` into a JAR file and use this in a new Eclipse project where only one class is defined, which uses `PairOfDice` and `StatCalc`. Commit both projects into your repository (in two separate directories). The structure of your git repository should be as follows. Please follow the exact naming scheme.
+// ** `project43/`… (contains `src` with your source code inside a sub-directory of it)
+// ** `project47/`… (contains `src` with your source code inside a sub-directory of it)
+// ** `project53utils/`… (contains `utils.jar` and `src/` with `PairOfDice` and `StatCalc` inside a sub-directory of it)
+// ** `project53main/`… (contains `src/` with you main method)
+//* You may use the `groupId` `io.github.<yourgithubusername>`.
+* EE5.4, EE5.5: Play Blackjack!
+
+== Exercice: Three dice
+* Create a class having full name `io.github.yourgithubusername.TripletOfDice` (use your GitHub username). This object represents three dice. Its constructor accepts an integer which defines the number of https://commons.wikimedia.org/wiki/Dice_by_number_of_sides[sides] of the dice. Add methods `rollAllDice()` and `rollOneDie(int: dieNumber)` whose parameter must be the integer one, two or three; and methods `getFirstDie(): int`, `getSecondDie(): int` and `getThirdDie(): int`. Determine and write down (in Javadoc) the contracts of these methods and write their code. [Optional: propose a better interface.]
+* Create a class `io.github.yourgithubusername.DiceUser` having a static method `rollOnce(): TripletOfDice`. It creates a triplet of six-sided dice, rolls them once, and returns the object representing the triplet.
+* In the `DiceUser` class, create a `main` method. It calls `rollOnce()` and prints the result on three lines, as follows (example for a result of 4, 2 and 1): `The die number 1 is a 4`, second line `The die number 2 is a 2`, third line `The die number 3 is a 1`.
+
+Hints for self-correction https://github.com/oliviercailloux/java-course/blob/main/Objects%20%26%20interfaces/Correction%20of%20Three%20dice.adoc[here]. Do not look at it before having implemented your own version!
+
+== Multiple players
+* Implement a two players (random) game. Each player has a triplet of dice. Each player throws their dice. Player one loses one point and rethrows if the other player has at least as high a total as hers and . Then same thing for player two. After twenty turns, the highest total wins.
+Example run: P1 has 10, P2 has 7. P1 keeps her roll. P2 loses one point and rerolls and obtains 14. P1 loses one point and rerolls and obtains 11. P2 keeps her roll. P1 loses one point and rerolls and obtain 15. And so on. If the game ends now, P1 has −2 and P2 has −1 so P2 wins.
+* Create a class Player that contains her name, her dice and her current result. Implement the game by using this class.
+* Extend to three players.
+
+== Interfaces: syntax and example
+* See https://github.com/oliviercailloux/java-course/blob/main/Syntax/Interfaces.adoc[here] for the syntax related to interfaces in Java
+* Import https://github.com/oliviercailloux/sample-interface[this sample interface project] for an example with one `Computer` interface implemented as an `EcologicalComputer` and as a `CryptographyComputer`, and used by a `CryptographyService`. See this https://raw.githubusercontent.com/oliviercailloux/Simple-Papyrus-project/interface/An%20interface%20and%20two%20realizations.svg[diagram].
+
+== Exercice: I like to move it move it
+Program an interface `MovableObject` with methods `canAccelerate(): boolean`, `accelerate(): void` and `getTimeToMove(double): double`; implement it twice in classes `ConstantSpeedMovable` and `GeneralMovable`, in a reasonable way of your choice. In a class `MovableUser`, program a `main` method that instanciates one `ConstantSpeedMovable` and two `GeneralMovable` objects, accelerate one of them, and prints the times to move 1 km for each of these instances. Add a method `brake(): void` to `MovableObject`. Add to `MovableUser` a method `getTotalTime(movable: MovableObject): double` that computes the total time taken for the given movable object to move 1 km, then brake if possible, then move 100m, then accelerate if possible, then move 1 km again. Should `getTotalTime` be static? Change your `main` so that it also prints that total time, for each of the three objects created in the method.
+
+== Exercice: 421
+Clone https://github.com/oliviercailloux-org/sample-g421[this repository]. Implement the interface `Game421`. You may name the class as you like. Do not change the `Game421` or `DiceRoller` interfaces.
+
+A class `RandomDiceRoller` is provided that implements `DiceRoller` to help you test your implementation of `Game421`, if you want. You may define more constructs if you like (test classes, helper classes, …) and you may change (or duplicate…) the existing `RandomDiceRoller` class if you so desire.
+
+Provide a non random `DiceRoller`.
+
+== Exercice: Car
+Clone https://github.com/oliviercailloux-org/car/[car] and implement as required.
+
+== Inheritance
+See: https://github.com/oliviercailloux/java-course/blob/main/Syntax/Inheritance.adoc[Inheritance], or read https://math.hws.edu/javanotes/contents-with-subsections.html[ES5.5] to 5.8
+
+Remember that Interfaces may _extend_ other interfaces; classes may _implement_ interfaces and _extend_ other classes
+
+== Exercice: Car extension
+We start from the solution of the car exercice here above.
+Create a `MemorizerCar` that can be used as follows: after calling several times `drive`, the user can query what the positions of the car was after its first move, second move, and third move (in supplement to be able to query its current position). Here position means total traveled distance.
+See https://github.com/oliviercailloux-org/car/blob/user/src/main/java/io/github/oliviercailloux/exercices/car/user/CarUser.java[`CarUser`] for an example of use of your class to be built.
+
+Do it first by modifying some variables from `SimpleCar` from `private` to `protected`. Then do it while keeping every variables in `SimpleCar` `private`. Do it without implementing again the logic that computes the new position when driving for some time (assume that this algorithm is very complex and you do not want to duplicate it).
+
+== Exercice: Car string
+Create an object `Car extends Object` that does not override `toString()`, call its `toString()` method, explain what happens. Override `toString()` in your class `Car`, call the `toString()` method, explain what happens. Consider the following code: `Object car = new Car(); car.toString()`. Will the method be the one declared in `Object` or in `Car`, and why? What changes if we instead write `Car car = new Car(); …`?
+
+== Exercice: Coffee
+Clone https://github.com/oliviercailloux/coffee/[this repository]. Implement the classes `DripCoffeeMaker` and `MyEspressoMachine`, making sure they satisfy their contracts.
+
+.Elements of correction
+[%collapsible]
+====
+* After `dripMachine.produceCoffee(0.3d)`, `dripMachine.getEnergySpent()` should return `83d` [Energy non zero]
+* After `dripMachine.produceCoffee(0.3d)`, `dripMachine.getEnergySpent()` should not be `0d`, and after `dripMachine.produceCoffee(0d)`, `dripMachine.getEnergySpent()` should return `0d` [Energy zero]
+* `dripMachine.getTimeForCoffee(0.8d)` should return 120 [Time non zero]
+* `dripMachine.getTimeForCoffee(10.2d)` should throw an instance of `IllegalArgumentException` [Time throws]
+====
+
+== Checked exceptions
+Exceptions, checked and unchecked: see this https://www.programcreek.com/2009/02/diagram-for-hierarchy-of-exception-classes/[diagram] (or https://rollbar.com/blog/java-exceptions-hierarchy-explained/#[here], more complete).
+
+Exercice about syntax
+
+. Program a method that draws a random number and throws a `IOException` with one chance on two. Observe that it compiles only if you declare this exception in the signature. Call this method from another method. Observe that the calling method also must declare the exception.
+. Change the exception to an `IllegalArgumentException`. Observe that you do not have to declare this in either method signature.
+
+Exercice about declaring exceptions
+
+. Program a method called `readOrder` that throws a `FileNotFoundException` with one chance on two. Give it an appropriate header.
+. Program a method called `writeOrder` that throws an `IOException` with one chance on two. Give it an appropriate header.
+. Program a method called `order` that throws an `IllegalStateException` with one chance on three and (with the remaining two chances on three) calls `readOrder` then (if this succeeds) `writeOrder`. Think about your options about declaring exceptions. Which one is best?
+
+See also: https://github.com/oliviercailloux/java-course/blob/main/Contrat/Exceptions.adoc[best practices].
+
+.Answer
+[%collapsible]
+====
+* You may declare between one and three exceptions on `order` (which ones? Try it!)
+* I’d say that the best choice is to declare only one.
+====
+
+== Supplementary exercices from the book
+
+* https://math.hws.edu/javanotes/c5/exercises.html[EE5.4] (use `Scanner` instead of `TextIO`), 5.5
+// simple inheritance (no TextIO depended on, actually), but complex set up
+// implements but no inheritance
+* https://math.hws.edu/javanotes/c5/exercises.html[EE5.7] (you need to do or have a look at the required exercices; the part about anonymous classes is optional)
+//** Supplementary requirements: your code must lie in at least two packages;
+//** The idea of this exercice is that you simulate that three different people work on this exercice: one provides some interfaces; another implements the interfaces; a third one uses the interfaces and their implementations to solve the exercice (except you represent all these persons).
+//** Declare at least one interface in another Eclipse project, exported as a Java archive (JAR file);
+//** implement those interfaces in another Eclipse project, exported as a Java archive (JAR file) (will you need the previous JAR file? Why / why not?);
+//** solve the exercices in a third Eclipse project (will you need the previous JAR files? Which ones and why?).
+
+* (https://math.hws.edu/javanotes/c5/exercises.html[EE5] provides more exercices, and https://math.hws.edu/javanotes/c8/exercises.html[EE8] has more advanced ones)
+
+== Generics
+Diagram https://raw.githubusercontent.com/oliviercailloux/Simple-Papyrus-project/cars-before-generic/Three%20cars.svg?sanitize=true[before generics], https://raw.githubusercontent.com/oliviercailloux/Simple-Papyrus-project/cars-after-generic/Generic%20Car%20and%20Cars.svg?sanitize=true[after generics]; sample https://github.com/oliviercailloux/sample-generic-cars[code]
+
+== Exercice: Generic pair
+
+* Program a class `Pair` with generic types `L`, `R` (for Left and Right), that can store a pair of things, one of type `L` and one of type `R`. For example, a `Pair<Double, Integer>` instance can store a `Double` instance and an `Integer` instance.
+* Provide methods `getLeft()`, `getRight()`, that each return the appropriate type, and `setContents()`, that admits two parameters and that sets the two elements of the pair.
+* Use your class in a `main` method that creates two `pairs`: one pair of `String` and `Integer` that holds your name and your age, and one pair of real values drawn randomly in [0, 1].
+* Add a static method `show` that admits any kind of pair as parameter and prints its content (by calling `toString()` on the left and then on the right content of the pair). Use `show` from your main for each of your instances of pair.
+* Modify the code so that calling `p.toString()`, when `p` is a pair of double and integer, returns a human readable string that describes its contents.
+* Finally, still from your `main`, create a pair that contains each of your instances of pairs, and give it as an argument to `show`.

@@ -1,0 +1,1116 @@
+\RequirePackage[l2tabu, orthodox]{nag}
+\documentclass[french, english]{beamer}
+\input{preamble/packages}
+\input{preamble/redac}
+\input{preamble/math_basics}
+\input{preamble/math_mine}
+\input{preamble/draw}
+%\input{preamble/acronyms}
+\input{preamble/uml}
+\input{preamble/jdoc}
+
+%\setbeamertemplate{headline}[singleline]
+\setbeamertemplate{footline}[onlypage]
+
+\title{JPA}
+\subject{ORM}
+\keywords{ORM, Hibernate, Persistence, CDI, Transactions, JTA}
+\author{Olivier Cailloux}
+\institute[LAMSADE]{LAMSADE, Université Paris-Dauphine}
+\date{Version du \today}
+
+\DeclareExpandableDocumentCommand{\jdocRefBaseUrl}{}{\jdocRefEEEightBaseUrl}
+\begin{document}
+\bibliographystyle{apalike}
+
+\begin{frame}[plain]
+	\tikz[remember picture,overlay]{
+		\path (current page.south west) node[anchor=south west, inner sep=0] {
+			\includegraphics[height=1cm]{LAMSADE95.jpg}
+		};
+		\path (current page.south) ++ (0, 1mm) node[anchor=south, inner sep=0] {
+			\includegraphics[height=9mm]{Dauphine.jpg}
+		};
+		\path (current page.south east) node[anchor=south east, inner sep=0] {
+			\includegraphics[height=1cm]{PSL.png}
+		};
+	}
+   \titlepage
+\end{frame}
+\addtocounter{framenumber}{-1}
+
+\section{JPA : démarrage}
+\subsection{Introduction}
+\begin{frame}
+	\frametitle{\subsecname}
+	\begin{itemize}
+		\item JPA ? \pause Java Persistence API
+		\item Standard pour gérer la persistence
+		\item Pour Java SE et Java EE
+		\item BD : modèle relationnel {\tiny typiquement}
+		\item JDBC : accès via Java, modèle relationnel
+		\item JPA : accès via Java, modèle objet
+		\item JPA implémente un \emph{ORM} : Object-Relational Mapping
+		\item JPA définit les concepts et interfaces, fournisseur JPA les implémente (exemple : Hibernate)
+	\end{itemize}
+	 Avec Java EE, JPA généralement utilisé
+\end{frame}
+
+\begin{frame}
+	\frametitle{Faiblesses du modèle relationnel pur}
+	Problème : non concordance (\emph{Mismatch}) Objet / Relationnel
+	\begin{itemize}
+		\item Modèle de données : objets
+		\item Cohérence à maintenir entre BD et objets : types, colonnes, contraintes not null ou autres…
+		\item Répétition lors écriture des requêtes de base
+		\item Références directionnelles
+		\item Modèle Entité / Relationnel : sans comportement
+		\item Pas de notion de navigation
+		\item Chargement automatique ? \pause Éviter de charger tout le graphe !\pause
+		\item Problème classique : n+1 select
+		\item Difficultés particulières : héritage et autres concepts objet
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Avantages d’une solution ORM}
+	ORM : Object / Relational Mapping
+	\begin{itemize}
+		\item Détection des modifications avec accès BD optimisés
+		\item Réduction code répétitif
+		\item Meilleure portabilité
+		\item Permet modèle objet fin
+		\item Facilite réusinage et développement agile
+	\end{itemize}
+	{\tiny De : \href{http://www.lamsade.dauphine.fr/~manouvri/HIBERNATE/SLIDES/ORM.pdf}{diapos} Maude Manouvrier, p. 22}
+\end{frame}
+
+\subsection{ORM et entités}
+\begin{frame}
+	\frametitle{Modèle et Entité}
+	\begin{itemize}
+		\item DM : Domain Model
+		\item Lien entre DM et BD : \emph{entités} et annotations sur entités
+		\item DM contient des classes \emph{entités}
+		\item Entité : instance représente {\tiny pas toujours} une ligne d’une table
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Définition d’une entité}
+	\begin{itemize}
+		\item Marquer classe \jdocRef{@javax.persistence/Entity} {\tiny (voir aussi \jdocRef{@javax.persistence/Table})}
+		\item Marquer champs transiants {\tiny (ou méthodes get*)} \jdocRef{@javax.persistence/Transient} {\tiny (et persistants \jdocRef{@javax.persistence/Column} si désiré)}
+		\item Marquer un champ persistant id \jdocRef{@javax.persistence/Id} (et \jdocRef{@javax.persistence/GeneratedValue})
+		\item Id représente la clé primaire
+		\item Id initialisé par le fournisseur de persistence (pas de \texttt{setId} public) {\tiny (sauf si clé naturelle, généralement déconseillé)}
+		\item Pour permettre concurrence optimiste : marquer un champ persistant version \jdocRef{@javax.persistence/Version} (écriture : slmt fournisseur)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Unité de persistance}
+	\begin{minipage}[c]{4.3cm}
+		\begin{itemize}
+			\item Ensemble d’entités contenu dans une \og{}persistence unit\fg{}
+			\item Unité liée à un pilote JDBC et des propriétés de connexion
+			\item Liaison effectuée par configuration xml
+		\end{itemize}
+	\end{minipage}\hfill%
+	\begin{minipage}[c]{6cm}
+		\begin{tikzpicture}[baseline=(punit text.north)]
+			\path node[draw, ellipse] (JDBC) {JDBC};
+			\path (JDBC.west) ++(-3mm, 0) node[draw, ellipse, anchor=east] (Entities) {Entités};
+			\path (JDBC.south) ++(-3mm, -3mm) node[draw, ellipse, anchor=north] (Driver1) {Pilote Pg.};
+			\path (Driver1.south) ++(0mm, -4mm) node[draw, ellipse, anchor=north] (BD1) {BD Pg.};
+			\path node[fit={(Entities) (BD1)}, draw, ellipse] (punit set) {};
+			\path (punit set.north -| punit set.east) node[anchor=south east] (punit text) {Persistence Unit};
+%			\path (punit set |- punit text.north) ++(0, 3mm) node[anchor=south, draw, ellipse] (App) {Application};
+%			\path[<->, draw] (App) -- (punit text);
+%			\path[<->, draw] (Entities) -- (App);
+			\path[<->, draw] (Entities) -- (JDBC);
+			\path[<->, draw] (JDBC) -- (Driver1);
+			\path[<->, draw] (Driver1) -- (BD1);
+		\end{tikzpicture}
+	\end{minipage}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Configuration unité de persistance}
+	\begin{itemize}
+		\item Unité de pers. définie dans \texttt{META-INF/persistence.xml} {\tiny (\href{http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd}{xsd})}
+		\item Par défaut, unité contient toutes les entités du projet {\tiny (non-standard JPA en Java SE)}
+	\end{itemize}
+	\begin{lstlisting}[language = XML]
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+ xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"	
+ xsi:schemaLocation="...">
+  <persistence-unit name="MyPersistenceUnit">
+    <properties><property ... /></properties>
+  </persistence-unit>
+</persistence>
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Unité de persistance en Java EE}
+	\begin{itemize}
+		\item Conteneur Java EE définit \texttt{java:comp/DefaultDataSource} : nom utilisé par défaut
+		\item Sinon, indiquer, dans \texttt{persistence.xml}, \texttt{jta-data-source} : un nom JNDI
+		\item Fournisseur trouvé dans classpath
+		\item Java EE : fournisseur JPA donné par serveur d’application
+		\item Java EE : \texttt{META-INF/persistence.xml} dans le \texttt{.war} {\tiny (aussi possible dans EJB ou dans un jar bibliothèque du \texttt{.ear})}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Propriétés unité de persistance}
+	\begin{itemize}
+		\item Génération du schéma par JPA : propriété {\small\texttt{javax.persistence.schema-generation.database.action}}, valeur {\small\texttt{drop-and-create}} {\tiny cf. \href{https://docs.oracle.com/javaee/7/tutorial/persistence-intro005.htm}{tutorial}}
+		\item Propriétés propriétaires
+	\end{itemize}
+Exemple, Hibernate :
+	\begin{itemize}
+		\item \texttt{hibernate.show\_sql} (valeur : \texttt{true})
+		\item \texttt{hibernate.format\_sql}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\texttt{EntityManager}}
+	\begin{itemize}
+		\item Unité associée à \jdocRef{javax.persistence/EntityManagerFactory}
+		\item \jdocRef{javax.persistence/EntityManager} gère entités dans unité persistance
+		\item Java SE : {\small \texttt{\jdocRef[full text = Persistence.createEntityManagerFactory]{javax.persistence/Persistence\#createEntityManagerFactory}("MyUnit");}}
+		\item Fournisseur JPA lit la configuration et instantie une Factory
+		\item Java EE : le conteneur s’occupe de l’\texttt{EntityManagerFactory}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Persistance initiale avec EntityManager}
+	Création d’une nouvelle entité :
+	\begin{itemize}
+		\item \texttt{e = new MyEntity(); e.setTruc(…);//} e est \og{}new\fg{}
+		\item \texttt{entityManager.persist(e);//} e est \og{}managed\fg{}
+		\item fermeture du entityManager : e est \og{}detached\fg{}
+	\end{itemize}
+\end{frame}
+
+\subsection{Contexte de persistance}
+\begin{frame}
+	\frametitle{Contexte de persistance}
+	\begin{itemize}
+		\item \texttt{EntityManager} (EM) lié à un \emph{contexte de persistance}
+		\item Contexte : cache d’entités
+		\item Chaque entité peut être associée à son identité persistante
+	\end{itemize}
+	\begin{block}{États d’une instance d’entité}
+		\begin{description}[detached]
+			\item[new] sans identité persistante, pas dans le contexte
+			\item[managed] avec identité persistante, dans le contexte
+			\item[detached] avec identité persistante, pas dans le contexte
+			\item[removed] avec identité persistante, dans le contexte de persistance, marquée pour effacement
+		\end{description}
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{EM et requêtes}
+	\begin{itemize}
+		\item Modifications des entités : modification en mémoire
+		\item Quand nécessaire ou au commit : flush du entity manager
+		\item Flush : synchronisation état contexte avec BD
+	\end{itemize}
+	\begin{exampleblock}{Requête retardée}
+		\begin{itemize}
+			\item \texttt{e = new MyEntity(); e.setTruc(…);}
+			\item \texttt{entityManager.persist(e);//} \emph{pas} de requête à ce stade
+			\item \texttt{entityManager.flush();//} (ou commit) : \texttt{INSERT}…
+		\end{itemize}
+	\end{exampleblock}
+	\begin{itemize}
+		\item JPA fera {\tiny par défaut} un flush quand nécessaire
+	\end{itemize}
+\end{frame}
+
+\subsection{Transactions}
+\begin{frame}
+	\frametitle{Nécessité des transactions en Java EE}
+	\begin{itemize}
+		\item Les modifications doivent avoir lieu dans une transaction
+		\item Pourquoi pas toujours une transaction par requête ? \pause
+		\item Méthode m appelle m1 et m2
+		\item m1 et m2 effectuent chacune des opérations BD
+		\item Une ou deux transactions ? \pause
+		\item Ça dépend !
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{EM et transactions}
+	\begin{itemize}
+		\item JPA désactive mode auto-commit de JDBC
+		\item Transaction {\tiny normalement} terminée par un \texttt{commit}
+		\item Changements à la BD annulés par un \texttt{rollback}
+		\item Rollback n’annule \emph{pas} les changements en mémoire
+	\end{itemize}
+\end{frame}
+
+\subsection{Gestion des entités}
+\begin{frame}
+	\frametitle{Mise à jour état entités}
+	\begin{itemize}
+		\item État \emph{managed} : entités gérées par persistence unit
+		\item Retient les changements de données
+		\item Synchronisés au flush
+	\end{itemize}
+	\begin{exampleblock}{Changement de données}
+		Supposons entité \texttt{u} \emph{managed}
+		\begin{itemize}
+			\item \texttt{u.setTruc(…); //} \texttt{em} enregistre que \texttt{u} modifiée en mémoire
+			\item \texttt{em.flush(); //} \texttt{UPDATE}…
+		\end{itemize}
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Récupérer une entité}
+	\begin{exampleblock}{Récupération}
+		\texttt{User u = em.find(User.class, 1234); //} \texttt{u} est managed {\tiny (si non \texttt{null})}
+	\end{exampleblock}
+	Exemple où le \texttt{find} ne génère pas de \texttt{SELECT} ? \pause Si \texttt{u} est déjà dans le contexte de persistance
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Effacer une entité}
+	\begin{exampleblock}{Effacement}
+		Supposons entité \texttt{u} \emph{managed}
+		\begin{itemize}
+			\item \texttt{em.remove(u); //} \texttt{u} est \emph{removed}
+			\item \texttt{em.flush(); //} \texttt{DELETE}…
+		\end{itemize}
+	\end{exampleblock}
+	\begin{itemize}
+		\item Effacer une entité : entité \emph{doit} être \og{}managed\fg{}
+		\item Exemple où entité n’est pas \og{}managed\fg{} ? \pause \texttt{u} est \emph{new}, ou… ?
+	\end{itemize}
+	\begin{lstlisting}
+User u = em.find(User.class, 1234);
+em.close();
+EntityManager em2 = emfactory.createEntityManager();
+\end{lstlisting}
+	⇒ Dans \texttt{em2}, \texttt{u} est… ? \pause \emph{detached} 
+\end{frame}
+
+\section{JPA : Mise en œuvre}
+\subsection{Value types}
+\begin{frame}
+	\frametitle{Définition des value types}
+	\begin{itemize}
+		\item Entity type : une classe représentant une table
+		\item Value type : une classe représentant une \emph{partie} d’une table
+		\item Entité a un cycle de vie propre
+		\item Value type attachée à une entité
+		\item Cycle de vie dépend de l’entité parente
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Sortes de value types}
+	\begin{itemize}
+		\item Value type de base : champ \texttt{int} par exemple
+		\begin{itemize}
+			\item Représente une colonne avec un type simple Java
+			\item Utilise les conversions JDBC
+			\item Exemple : Date, int…
+		\end{itemize}
+		\item Value type collection : pour liens multiples entre instances
+		\begin{itemize}
+			\item Nous n’en parlerons pas ici
+		\end{itemize}
+		\item Value type embarqué
+		\begin{itemize}
+			\item Représente \emph{plusieurs} colonnes avec un type Java non élémentaire
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Utilité du value type embarqué}
+	\begin{exampleblock}{Value type embarqué}
+		\begin{itemize}
+			\item Dans BD, une seule table \texttt{User}
+			\item User a une adresse
+			\item Dans modèle objet, classe \texttt{User} et classe \texttt{Adresse}
+		\end{itemize}
+	\end{exampleblock}
+	\begin{itemize}
+		\item Modèle objet : \emph{granularité} plus fine peut être désirable
+		\item Pourquoi cette différence ? \pause
+		\item Classes ont des responsabilités
+		\item Réutiliser une classe, ne pas la dupliquer
+		\item Schéma BD stable dans le temps
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Utilisation}
+	\begin{itemize}
+		\item Annoter le value type \jdocRef{@javax.persistence/Embeddable}
+		\item Annoter son utilisation \jdocRef{@javax.persistence/Embedded}
+		\item On peut aussi utiliser un value type dans un value type
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Exemple d’utilisation}
+	\begin{minipage}{6.3cm}
+		\begin{lstlisting}[language=Java, basicstyle=\small]
+@Embeddable
+public class Zip {
+  private String postalCode;
+  private String city;
+}
+@Embeddable
+public class Address {
+  private String street;
+  @Embedded
+  private ZipCode zipCode;
+}
+@Entity
+public class User {
+  private String name;
+  @Embedded
+  private Address address;
+}
+\end{lstlisting}
+	\end{minipage}%
+	\begin{minipage}{\columnwidth - 6.3cm}
+		\begin{tikzpicture}
+			\path node[circle, draw, minimum size=1cm] (Zip) {};
+			\path (Zip.north east) ++ (-1mm, -1mm) node[anchor=south west] (Zip text) {Zip};
+			\path node[fit={(Zip) (Zip text)}, draw, ellipse] (Address) {};
+			\path (Address.north -| Address.east) node[anchor=south east] (Address text) {Address};
+			\path node[fit={(Address) (Address text)}, draw, ellipse] (User) {};
+			\path (User.north east) node[anchor=south west] (User text) {User};
+		\end{tikzpicture}
+	\end{minipage}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Utilisation via \texttt{EntityManager}}
+	\begin{itemize}
+		\item Créer une instance \texttt{user}
+		\item Créer une instance \texttt{address}
+		\item \texttt{user.setAddress(address)}
+		\item \texttt{em.persist(user)}
+		\item L’EM persiste le user \emph{et} son adresse
+		\item Cycle de vie \texttt{address} lié à cycle \texttt{user}
+		\item De même, effacement d’un user efface son adresse
+	\end{itemize}
+\end{frame}
+
+\subsection{Liens entre entités}
+\subsubsection{One-to-many}
+\begin{frame}
+	\frametitle{Association one-to-many}
+	\begin{itemize}
+		\item Une personne a plusieurs numéros de téléphone
+		\item BD ? \pause clé étrangère \texttt{Phone} référence \texttt{Person}
+	\end{itemize}
+	\begin{tikzpicture}
+		\path node[/uml/table2] (Phone) {%
+				\nodepart[font=\bfseries]{one}
+				Phone
+				\nodepart{two}
+				person\_id: int\\
+				type: char[]
+			};
+		\path (Phone.east) ++(1ex, 0.5ex) node[anchor=base] {n};
+		\path (Phone.east) ++(1.5cm, 0) node[/uml/table2, anchor=west] (Person) {%
+				\nodepart[font=\bfseries]{one}
+				Person
+				\nodepart{two}
+				id: int\\
+				name: char[]
+			};
+		\path (Person.west) ++(-1ex, 0.5ex) node[anchor=base] {1};
+		\path[/uml/dbkey] (Phone) -- (Person);
+	\end{tikzpicture}
+	\pause
+	
+	\vspace{1em}
+	Représentation avec ORM ? \pause
+	\begin{itemize}
+		\item Classe \texttt{Phone} référence \texttt{Person}
+		\item Classe \texttt{Person} a une collection de \texttt{Phone}s
+		\item Les deux
+	\end{itemize}
+	Côté \texttt{Person} appelé parent ; côté \texttt{Phone} appelé enfant
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Mapping proche BD}
+	Classe \texttt{Phone} référence \texttt{Person}
+	\begin{itemize}
+		\item Entités normales \texttt{Phone} et \texttt{Person}
+		\item Dans \texttt{Phone}, inclure champ \texttt{Person}
+		\item L’annoter \jdocRef{@javax.persistence/ManyToOne} {\tiny voir aussi \jdocRef{@javax.persistence/JoinColumn}}
+		\item Retenir : "…ToOne" plutôt que "Many" !
+		 \item Crée schema présenté précédemment
+	\end{itemize}
+	\begin{lstlisting}[language=Java]
+@Entity
+public class Phone {
+  @Id ...
+  
+  @ManyToOne
+  private Person person;
+}
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Usage mapping \texttt{ManyToOne}}
+	\begin{itemize}
+		\item Deux entités aux cycles de vie indépendants
+		\item Par défaut : nécessaire persister \texttt{Phone} \emph{et} \texttt{Person}
+		\item \texttt{phone.setPerson(person)}
+		\item \texttt{em.persist(phone)}
+		\item \texttt{em.persist(person)}
+		\item De même, nécessaire {\tiny sauf \texttt{cascade=ALL} sur annotation} effacer \texttt{Phone} en plus de \texttt{Person}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Limites du mapping \texttt{ManyToOne}}
+	\begin{itemize}
+		\item Solution précédente simple
+		\item Mais… ? \pause Peu naturelle \pause
+		\item Comment trouver les n° de téléphone d’une personne ? \pause
+		\item On peut toujours le faire par requête SQL !
+		\item Mais on peut souhaiter pouvoir le faire via navigation de pointeurs
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Mapping \texttt{OneToMany} unidirectionnel}
+	\begin{itemize}
+		\item Mapping inverse : ref \jdocRef{@javax.persistence/OneToMany} unidirectionnelle
+		\item JPA utilise une table intermédiaire \texttt{Person\_Phone}%TODO pourquoi ?
+	\end{itemize}
+	\begin{lstlisting}[language=Java]
+@Entity
+public class Phone {
+  @Id ...
+
+}
+@Entity
+public class Person {
+  @Id ...
+  
+  @OneToMany
+  private List<Phone> phones;
+}
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Usage mapping \texttt{OneToMany}}
+	\begin{itemize}
+		\item Effacement peu efficace : Hibernate enlève tous les \texttt{phone}s et réinsère les non-effacés
+		\item Il faut maintenir la référence vers une même collection%TODO liste ou autre ? Faut-il l’initialiser ? Peut-elle être final ?
+		\item Retrait d’un \texttt{phone} depuis la liste depuis \texttt{person} : penser à effacer également l’entité \texttt{phone} correspondante
+		\item \texttt{person.getPhones().remove(phone)}
+		\item \texttt{em.remove(phone)}
+		\item Ou effacement automatique avec \texttt{orphanRemoval} sur annotation \texttt{OneToMany}
+		\item Avec \texttt{cascade} sur annotation : \texttt{em.remove(person)} ⇒ efface également ses téléphones
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Mapping \texttt{OneToMany} bidirectionnel}
+	\begin{itemize}
+		\item Et si on veut pouvoir naviguer depuis les deux côtés ?
+		\item \texttt{OneToMany} côté parent, \texttt{ManyToOne} côté enfant
+		\item Il faut un seul propriétaire de la relation
+		\item Propriétaire toujours côté enfant (\texttt{ManyToOne})
+		\item Côté inverse : préciser \texttt{mappedBy = "person"} sur \texttt{OneToMany}
+	\end{itemize}
+	\begin{lstlisting}[language=Java]
+@Entity
+public class Phone {
+  @ManyToOne
+  private Person person;
+
+@Entity
+public class Person {
+  @OneToMany(mappedBy = "person")
+  private List<Phone> phones;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Usage mapping \texttt{OneToMany} bidirectionnel}
+	Deux côtés dans modèle, mais un côté dans BD :\par
+	{\centering
+		\begin{tikzpicture}
+			\path node[/uml/table2] (Phone) {%
+					\nodepart[font=\bfseries]{one}
+					Phone
+					\nodepart{two}
+					person\_id: int\\
+					type: char[]
+				};
+			\path (Phone.east) ++(1ex, 0.5ex) node[anchor=base] {n};
+			\path (Phone.east) ++(1.5cm, 0) node[/uml/table2, anchor=west] (Person) {%
+					\nodepart[font=\bfseries]{one}
+					Person
+					\nodepart{two}
+					id: int\\
+					name: char[]
+				};
+			\path (Person.west) ++(-1ex, 0.5ex) node[anchor=base] {1};
+			\path[/uml/dbkey] (Phone) -- (Person);
+		\end{tikzpicture}
+		\par
+	}
+	
+	\begin{itemize}
+		\item Maintenir les pointeurs corrects dans le modèle des \emph{deux côtés}
+		\item Méthode ajout téléphone : \texttt{person.getPhones().add(phone) ; phone.setPerson(person);}
+		\item Pourquoi cette nécessité ? \pause Pour code correct indépendamment du code de persistence \pause
+		\item Si cascades, partent toujours du côté parent {\tiny : effacer \texttt{person} peut être répercuté sur \texttt{phone}s}
+		\item Nettement plus efficace {\tiny effacer un \texttt{phone} : seulement une opération}%TODO vérifier que update activé du côté propriétaire (phone) (si phone non managé, person.getPhones().add(phone), rien ne se passe), comme indiqué dans Bauer. Toutefois, avec cascade, ajout d’un phone côté person fait persister le nouveau phone également.
+	\end{itemize}
+\end{frame}
+
+\subsubsection{Many-to-many}
+\begin{frame}[fragile]
+	\frametitle{Association many-to-many}
+	\begin{itemize}
+		\item Deux personnes peuvent partager un téléphone {\tiny par ex.\ co-habitants partageant un fixe}
+		\item Représentation en BD ? \pause
+	\end{itemize}
+	{\centering
+	\begin{tikzpicture}
+		\path node[/uml/table2] (Phone) {%
+				\nodepart[font=\bfseries]{one}
+				Phone
+				\nodepart{two}
+				id: int\\
+				type: char[]
+			};
+		\path (Phone.south) ++(3ex, 0) node[anchor=north] {1};
+		\path (Phone.east) ++(1.5cm, 0) node[/uml/table2, anchor=west] (Person) {%
+				\nodepart[font=\bfseries]{one}
+				Person
+				\nodepart{two}
+				id: int\\
+				name: char[]
+			};
+		\path (Person.south) ++(-3ex, 0) node[anchor=north] {1};
+		\path ($(Phone.east)!0.5!(Person.west)$) ++(0, -5em) node[/uml/table2, anchor=north] (PersonPhone) {%
+				\nodepart[font=\bfseries]{one}
+				PersonPhone
+				\nodepart{two}
+				id\_phone: int\\
+				id\_person: int\\
+				order\_nb: boolean
+			};
+		\path (PersonPhone.north west) ++(4ex, 0) node[anchor=south] {n};
+		\path (PersonPhone.north east) ++(-4ex, 0) node[anchor=south] {n};
+		\path[/uml/dbkey] (PersonPhone) -- (Phone);
+		\path[/uml/dbkey] (PersonPhone) -- (Person);
+	\end{tikzpicture}\par
+	}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Implémentation}
+	\begin{itemize}
+		\item Définir entité PersonPhone {\tiny (conseil ; autres possibilités existent)}
+		\item Associations JPA \texttt{ManyToOne}, \texttt{OneToMany} selon contraintes de navigabilité
+		\item Exemple : deux associations bidirectionnelles Phone – PersonPhone et Person – PersonPhone
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Informations supplémentaires}
+	\begin{itemize}
+		\item Autre bout d’un lien bidirectionnel (\texttt{@OneToMany}, \texttt{mappedBy}) : ne compte pas dans DDL
+		\item Liens one to one similaire, utiliser \jdocRef{@javax.persistence/OneToOne}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Chargement d’entités via référence}
+	\begin{itemize}
+		\item Entité \texttt{person} d’état \emph{managed}
+		\item \texttt{person.getPhones();}
+		\item L’entity manager charge les enfants
+	\end{itemize}
+\end{frame}
+
+\subsubsection{Héritage}
+\begin{frame}
+	\frametitle{Héritage}
+	\begin{tikzpicture}
+		\path node[/uml/class3, rectangle split parts=2] (animal) {%
+			\nodepart{one}
+			\slshape Animal%FIXME itshape not available with tt and bf
+			\nodepart{two}
+			mainColor\\
+			speed
+		};
+		\path (animal.south) ++(-3.2cm, -1em) node[anchor=north, /uml/class3, rectangle split parts=2] (animal1) {%
+			\nodepart{one}
+			Snake
+			\nodepart{two}
+			likesElephants
+		};
+		\path (animal.south) ++(0, -1em) node[anchor=north, /uml/class3, rectangle split parts=2] (animal2) {%
+			\nodepart{one}
+			Cat
+			\nodepart{two}
+			likesCouch
+		};
+		\path (animal.south) ++(3.5cm, -1em) node[anchor=north, /uml/class3, rectangle split parts=2] (animal3) {%
+			\nodepart{one}
+			Crocodile
+			\nodepart{two}
+			likesMissionaries
+		};
+		\path[/uml/extends] (animal1) -- (animal);
+		\path[/uml/extends] (animal2) -- (animal);
+		\path[/uml/extends] (animal3) -- (animal);
+	\end{tikzpicture}
+	\begin{description}[Mapped superclass]
+		\item[Mapped superclass]\mbox{}%
+		\uncover<2>{%
+			$n$ tables non liées (dupl. champs)
+			\begin{itemize}
+				\item Inconvénient : pas de \og{}type\fg{} \texttt{Animal}
+			\end{itemize}
+		}
+		\item[Table per class]\mbox{}%
+		\uncover<2>{%
+			$n$ tables non liées (dupl.) + 1 virtuelle
+			\begin{itemize}
+				\item Inconvénient : polymorph. peu performant
+			\end{itemize}
+		}
+		\item[Single table]\mbox{}%
+		\uncover<2>{%
+			1 table + champ \texttt{DTYPE}
+			\begin{itemize}
+				\item Inconvénient : pas de \texttt{NOT NULL}
+			\end{itemize}
+		}
+		\item[Joined table]\mbox{}%
+		\uncover<2>{%
+			$n + 1$ tables avec liens
+			\begin{itemize}
+				\item Inconvénient : moins performant (\texttt{JOIN})
+			\end{itemize}
+		}
+	\end{description}
+\end{frame}
+
+\subsection{Chargement tardif}
+\begin{frame}
+	\frametitle{Références vers entités}
+	\begin{itemize}
+		\item Obtenir une représentation d’une entité sans la chercher dans BD
+		\item \texttt{em.getReference(User.class, 1234);}
+		\item Seule l’id est initialisée
+		\item Chargement \emph{tardif} (\emph{lazy}) : \texttt{SELECT} seulement si une autre propriété accédée {\tiny dans le même contexte}
+		\item Exemple d’usage ? \pause
+		\item Effacement de l’entité
+		\item Mise au point d’un pointeur \pause
+		\item Danger ? \pause Quand contexte fermé, trop tard pour accéder aux autres propriétés de l’entité !
+		\item Conseil : éviter de balader des entités non chargées
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Chargement tardif collections}
+	\begin{itemize}
+		\item Éviter problème n+1 selects %: fetch quand second select VS fetch immédiat via join
+		\item Attention au problème du produit cardinal
+		\item Défaut JPA : \jdocRef{javax.persistence/FetchType} = \texttt{EAGER} sur champs simples, \texttt{LAZY} sur collections
+	\end{itemize}
+\end{frame}
+
+\subsection{Requêtes}
+\begin{frame}[fragile]
+	\frametitle{Définition requêtes}
+	\begin{itemize}
+		\item Définir requête sur entité via \jdocRef{javax.persistence/NamedQuery} {\tiny ou  \jdocRef{javax.persistence/NamedQueries}}
+		\item Lui donner un nom
+	\end{itemize}
+	\begin{lstlisting}[basicstyle=\small]
+@NamedQuery(
+  name = "getUserByName",
+  query = "SELECT u FROM User u WHERE name = :name"
+)
+	\end{lstlisting}
+	\begin{itemize}
+		\item Dans code, invoquer requête par son nom
+		\item Indiquer les paramètres sur l’objet \jdocRef{javax.persistence/Query}
+	\end{itemize}
+	\begin{lstlisting}
+TypedQuery<User> typedQuery = entityManager.
+  createNamedQuery("getUserByName", User.class);
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{JPA QL}
+	\begin{lstlisting}
+SELECT DISTINCT pr FROM Person pr 
+  LEFT OUTER JOIN pr.phones ph 
+  WHERE ph is null or ph.type = :phoneType
+	\end{lstlisting}
+	\begin{itemize}
+		\item Dans clause FROM : entités (\texttt{Person}) et variables d’identification (ou aliases) (\texttt{pr})
+		\item Une seule entité dans FROM : renvoie \texttt{List<Person>}
+	\end{itemize}
+	\begin{lstlisting}
+SELECT pr, ph FROM Person pr, Phone ph 
+  WHERE phone.owner = pr
+	\end{lstlisting}
+	\begin{itemize}
+		\item Renvoie \texttt{List<Object[]>}
+		\item Pour chaque entrée \texttt{entry} : \texttt{entry[0]} de type \texttt{Person}, \texttt{entry[1]} de type \texttt{Phone}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Dynamic fetch en JPA QL}
+	\begin{itemize}
+		\item Ajouter fetch pour obliger fetch de type EAGER
+	\end{itemize}
+	\begin{lstlisting}
+SELECT DISTINCT pr FROM Person pr 
+  LEFT OUTER JOIN FETCH pr.phones
+	\end{lstlisting}
+\end{frame}
+
+\subsection{Aspects pratiques}
+\begin{frame}[fragile]
+	\frametitle{Merge}
+	\begin{itemize}
+		\item Entité détachée
+		\item Merge : entité redevient managed
+		\item Renvoie une référence
+		\item Ne plus utiliser l’ancienne
+		\item Modifications éventuelles seront reflétées dans DB au flush
+	\end{itemize}
+	\begin{lstlisting}[escapechar=$]
+User u = em.find(User.class, 1234);
+em.close(); // u $\textsf{détaché du contexte}$
+u.setName("HerName");
+EntityManager em2 = emFactory.createEntityManager();
+em.getTransaction().begin();
+User uNew = em2.merge(u); // uNew $\textsf{managed}$
+em2.getTransaction().commit(); // $\textsf{mise à jour BD}$
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Concurrence}
+	\begin{itemize}
+		\item Entité avec \texttt{@Version} : protection optimiste par défaut
+		\item Après update, effacement, merge : vérification automatique du n° de version en cache%vérification faite en pratique
+		\item Vérification effectuée au moment même ou au \texttt{flush}
+		\item Si versions ne correspondent pas : \jdocRef{javax.persistence/OptimisticLockException}
+		\item Protection pessimiste : utiliser \texttt{EntityManager.lock(entity, \href{https://docs.oracle.com/javaee/7/api/javax/persistence/LockModeType.html}{lockModeType})}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Patterns}
+	\begin{itemize}
+		\item DM doit fonctionner \emph{sans} persistance (tests ;  simplification dépendances)
+		\item Entités transversales (couche web et business) (ou DTO : Data Transfer Object, ou Command Pattern)
+		\item Qqs classes service business
+		\item Qqs classes persistence visibles du business
+		\item Pattern DAO \emph{seulement si justifié}
+	\end{itemize}
+\end{frame}
+
+\appendix
+\section{Conteneur}
+\begin{frame}
+	\frametitle{JTA}
+	\begin{itemize}
+		\item Unité de persistance est gérée à l’aide de JTA {\tiny par défaut en Java EE (sinon \og{}resource-local\fg{})}
+		\item JTA : Java Transaction API
+		\item Transaction associée à thread courante
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Gestion démarcation transactions}
+	\begin{itemize}
+		\item Conteneur peut également gérer les transactions : CMT
+		\item CDI managed beans : utiliser \jdocRef{@javax.transaction/Transactional}
+		\item Chaque méthode participe alors par défaut à une transaction
+		\item Si transaction en cours, la méthode y participe
+		\item Si pas de transaction en cours lors de l’appel : le conteneur démarre puis termine automatiquement une transaction (commit si ok, rollback si exception {\tiny sauf exception application})
+		\item EJB : CMT par défaut {\tiny (ou utiliser \jdocRef{@javax.ejb/TransactionManagement} pour BMT)}
+		\item Ou annoter la méthode \jdocRef{@javax.ejb/TransactionAttribute} sur EJBs
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Portée du contexte de persistance}
+	\begin{itemize}
+		\item Contexte de persistance peut être géré par conteneur
+		\item \jdocRef{@javax.persistence/PersistenceContext} \texttt{private EntityManager em;}
+		\item Injection ⇒ Portée gérée par conteneur
+		\item Portée par défaut : transaction JTA
+		\item Invoquer \texttt{em} \emph{après} ouverture transaction JTA
+		\item Conteneur crée le contexte lors première invocation \texttt{em} {\tiny si aucun contexte associé à transaction}
+		\item Conteneur ferme le contexte après fermeture transaction JTA
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Synchronisation du contexte de persistance}
+	\begin{itemize}
+		\item JTA EM peut être synchronisé ou non synchronisé
+		\item Si synchronisé (par défaut) :
+		\item Joint automatiquement transaction JTA en cours
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Usages plus avancés et divers}
+	\begin{itemize}
+		\item Contexte peut persister au-delà de la transaction
+		\item peut être non synchronisé
+		\item Voir \jdocRef{@javax.persistence/PersistenceContext}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Place mémoire du contexte}
+	\begin{itemize}
+		\item Le contexte de persistence connait toutes les entités qu’il gère
+		\item Peut prendre trop de place en mémoire
+		\item Utiliser \texttt{em.detach(…)} pour détacher des entités
+		\item Voir aussi \texttt{em.clear()}
+	\end{itemize}
+\end{frame}
+
+\section{Java SE}
+\begin{frame}
+	\frametitle{Fournisseur JPA en Java SE}
+	Fournisseur trouvé dans classpath. Java SE + Maven :
+	\begin{itemize}
+		\item Dépendance API JPA (fournie par Hibernate) : \href{http://search.maven.org/\#search\%7Cgav\%7C1\%7Cg\%3A\%22org.hibernate.javax.persistence\%22\%20AND\%20a\%3A\%22hibernate-jpa-2.1-api\%22}{hibernate-jpa-2.1-api}
+		\item \href{https://docs.jboss.org/hibernate/orm/5.2/quickstart/html_single/\#_the_hibernate_modules_artifacts}{Dépendances} implémentation Hibernate {\tiny (\href{https://docs.jboss.org/hibernate/orm/5.2/quickstart/html_single/\#_maven_repository_artifacts}{groupId} = \texttt{org.hibernate})} :
+		\item \texttt{hibernate-core} : Hibernate natif (seul composant obligatoire)
+    		\item Quels scopes ?
+		\item Quelles versions ?
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Configuration et usage en Java SE}
+	\begin{itemize}
+		\item Configurer JDBC
+		\item Propriétés \texttt{javax.persistence.jdbc.url}, \texttt{javax.persistence.jdbc.user}, \texttt{javax.persistence.jdbc.password} {\tiny (\texttt{javax.persistence.jdbc.driver} : semble non nécessaire (spec ambigüe))}
+		\item Obtenir la Factory une seule fois (coûteux)
+		\item Fermer la Factory en quittant
+		\item Si resource-local entity manager : utiliser \texttt{EntityTransaction}
+	\end{itemize}
+\end{frame}
+
+\section{Architecture}
+\begin{frame}
+	\frametitle{Pattern DAO}
+	Extraction des aspects propres à la persistance
+	\begin{itemize}
+		\item DAO ? \pause Data Access Object \pause
+		\item \og{}Modèle\fg{} découpé en aspects Persistance et Domain Model
+		\item Domain Model : opérations logiques, connaissance métier
+		\item Persistance : seule autorisée à communiquer avec la BD
+	\end{itemize}
+	\centering
+	\begin{tikzpicture}
+		\path node[draw, rectangle] (ItemServlet) {ItemServlet};
+		\path node[draw, ellipse, fit=(ItemServlet)] (Web) {};
+		\path (Web.north) node[anchor=south] {Web};
+		\path (Web.south) ++(-2cm, -1.5cm) node[anchor=north, draw, rectangle] (Item) {Item};
+		\path node[draw, ellipse, fit=(Item)] (DM) {};
+		\path (DM.north) node[anchor=south] {Domain Model};
+		\path (Web.south) ++(2cm, -1.5cm) node[anchor=north, draw, rectangle] (DAOItem) {DAOItem};
+		\path node[draw, ellipse, fit=(DAOItem)] (Persistence) {};
+		\path (Persistence.north) node[anchor=south] {Persistance};
+		\path[<->, draw] (Web) -- (DM);
+		\path[<->, draw] (Web) -- (Persistence);
+	\end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{DAO : mise en œuvre}
+	
+	\begin{minipage}[t]{4.5cm}
+		Classe parent
+		\begin{itemize}
+			\item abstraite 
+			\item générique : 
+			\begin{itemize}
+				\item \texttt{T} = type entité
+				\item \texttt{I} = type ID
+			\end{itemize}
+			\item contient les méthodes \emph{CRUD} : Create / Read / Update / Delete
+		\end{itemize}
+		\vspace{2em}
+		Sous-classes
+		\begin{itemize}
+			\item contiennent les méthodes spécialisées
+		\end{itemize}
+	\end{minipage}\hspace{7mm}%
+	\begin{minipage}[t]{\columnwidth-4.5cm-7mm}
+		\begin{tikzpicture}[baseline={([yshift=-1em] current bounding box.north)}]
+			\path node[/uml/class3] (GenericDAO) {%
+				\nodepart[font=\slshape\bfseries]{one}
+				GenericDAO
+				\nodepart{three}
+				findById(id: I)\\
+				findAll()\\
+				save(entity: T)\\
+				remove(entity: T)\\
+				flush()\\
+				close()
+			};
+			\path (GenericDAO.north east) node[dashed, draw, fill=white, node font=\ttfamily] {T, I};
+			\path (GenericDAO.south) ++ (-15.6mm, -1cm) node[anchor=north, /uml/class3] (ItemDAO) {
+				\nodepart{one}
+				ItemDAO
+				\nodepart{three}
+				getMaxBid(id)
+			};
+			\path (GenericDAO.south) ++ (15.6mm, -1cm) node[/uml/class, anchor=north] (OtherDAO) {OtherDAO};
+			\path (ItemDAO) edge[/uml/extends] node[align=left] {\tiny <<bind>>\\\ttfamily{}T: Item, I: Long} (GenericDAO);
+			\path[/uml/extends] (OtherDAO) -- (GenericDAO);
+		\end{tikzpicture}
+		
+		\raggedleft{{\tiny Inspiré par : Java persistence with hibernate}}
+	\end{minipage}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Différentes égalités}
+	\begin{block}{Trois types d’égalités}
+		\begin{itemize}
+			\item Égalité en mémoire : \texttt{a == b}
+			\item Égalité objet : \texttt{a.equals(b)}
+			\item Égalité DB : \texttt{a.getId().equals(b.getId())}
+		\end{itemize}
+	\end{block}
+	Quelles propriétés prendre en compte dans \texttt{hashCode} et \texttt{equals} ?
+	\begin{itemize}
+		\item Table de hachage : objet ne peut changer de hash / d’égalité
+		\item Dans une session il faut éviter deux objets not equals() et concernant la même ligne de la table
+		\item Id pour égalité : pourquoi pas ? \pause Tant que non persistantes, ne fonctionne pas ; change lors sauvegarde \pause
+		\item[$⇒$] Ensemble d’attributs déterminants pt de vue utilisateur ! (username…)
+	\end{itemize}
+\end{frame}
+
+\section{Autres gestions de la persistance}
+\begin{frame}
+	\frametitle{\texttt{EntityManager} géré par l’application}
+	\begin{itemize}
+		\item Contexte de persistance géré par l’application (Java SE, ou EE si désiré)
+		\item \jdocRef{@javax.persistence/PersistenceUnit} \texttt{private EntityManagerFactory emf;}
+		\item L’application instancie elle-même son \texttt{EntityManager}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Éviter les courants d’air}
+	\begin{itemize}
+		\item Ne pas oublier de fermer le contexte (si créé à la main) : \texttt{em.close()}
+		\item Fermer le contexte \emph{après} le commit
+		\item Possible : plusieurs transactions dans un contexte de persistence
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Gestion de transaction manuelle via JTA}
+	\begin{itemize}
+		\item JTA fournit une interface unique pour gérer transactions
+		\item Utiliser \jdocRef{javax.transaction/UserTransaction}
+		\item Conteneur rend \texttt{UserTransaction} disponible via JNDI
+		\item Injecter \texttt{UserTransaction} avec \texttt{@Resource}
+		\item L’utiliser pour démarrer et commettre la transaction
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{JTA EM non synchronisé}
+	\begin{itemize}
+		\item JTA EM peut être synchronisé ou non synchronisé
+		\item Si non synchronisé
+		\item Joindre \texttt{em} à la transaction : \texttt{em.joinTransaction()}
+		\item Rejoindre transactions suivantes après commit de la première et ouverture d’une nouvelle
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Portée du contexte de persistance}
+	\begin{itemize}
+		\item Contexte de persistance peut être géré par conteneur
+		\item \jdocRef{@javax.persistence/PersistenceContext} \texttt{private EntityManager em;}
+		\item Portée gérée par conteneur
+		\item Portée \jdocRef{javax.persistence/PersistenceContextType\#TRANSACTION} (par défaut) : portée liée à transaction JTA
+		\item Portée \jdocRef{javax.persistence/PersistenceContextType\#EXTENDED} : portée liée à managed bean le contenant
+	\end{itemize}
+\end{frame}
+
+\section{Licence}
+\begin{frame}
+	\frametitle{Licence}
+	Cette présentation, et le code LaTeX associé, sont sous \href{https://opensource.org/licenses/MIT}{licence MIT}. Vous êtes libres de réutiliser des éléments de cette présentation, sous réserve de citer l’auteur.
+	
+	Le travail réutilisé est à attribuer à \href{http://www.lamsade.dauphine.fr/~ocailloux/}{Olivier Cailloux}, Université Paris-Dauphine.
+\end{frame}
+\end{document}
+
+\begin{frame}
+	\frametitle{}
+	\begin{itemize}
+		\item 
+	\end{itemize}
+	\begin{block}{}
+		
+	\end{block}
+\end{frame}
+
+\section{Bibliographie}
+\begin{frame}[allowframebreaks]
+	\frametitle{Bibliographie}
+	\def\newblock{\hskip .11em plus .33em minus .07em}
+% 	\bibliography{zotero}
+\end{frame}
+
+\section{Autres}
+\begin{frame}
+	\frametitle{}
+	\begin{itemize}
+		\item 
+	\end{itemize}
+	\begin{block}{}
+		
+	\end{block}
+\end{frame}
+\end{document}

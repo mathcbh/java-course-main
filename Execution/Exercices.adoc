@@ -1,0 +1,25 @@
+= Class path: Exercices
+
+== The Hello project
+* Create a new project "Hello" from Eclipse.
+* Create a Java source code file from within Eclipse, having full name `mypackage.one.MyClass`, containing a method `sayHello()` that prints `Hello` and a method `main(String[])` that calls `sayHello()`.
+* Check that when run from Eclipse, your program says Hello.
+* Check which file Eclipse has put this code in. Explain its precise location on your hard disk.
+* Check and explain the precise location of the compiled version of `mypackage.one.MyClass` that Eclipse creates automatically.
+* Exit Eclipse, delete the compiled version that Eclipse has created for you.
+* Compile `mypackage.one.MyClass` manually using a terminal, with https://docs.oracle.com/en/java/javase/11/tools/javac.html[`javac`].
+** Remember that `javac` requests that you give it _files_ as arguments, not class names.
+* Move the just created compiled version to a new folder called `target` instead of `src` (thus into `target/mypackage/one`), to keep source files separated from compiled files.
+* Run the program using a terminal, with https://docs.oracle.com/en/java/javase/11/tools/java.html[`java`]. Check that it says Hello.
+* Restart Eclipse, export your project as a JAR archive in a file named `hello.jar`.
+
+== The Use Hello project
+* Create a new project "Use Hello".
+* In your project properties in Eclipse, in the build path, add your JAR archive `hello.jar`. 
+* Create a single class in your new project, having full name `userpackage.MyUserClass`, containing a method `main()`, that calls `sayHello()` *twice* from your `mypackage.one.MyClass` class.
+* Check that when run from Eclipse, your program says Hello twice.
+* Run the program using a terminal, with `java`. Check that it says Hello twice.
+
+== Solution
+The https://github.com/oliviercailloux/java-course/tree/main/Execution/Solution/[solution] is available as a bash script and two folders containing the source code.
+

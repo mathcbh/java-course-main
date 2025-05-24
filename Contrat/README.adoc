@@ -1,0 +1,38 @@
+= Contract
+
+Here we learn about the two most important principles of software engineering: designing your methods as contracts; and failing fast.
+
+We will learn about the following mechanisms, that implement these principles: interface; black box; preconditions and postconditions; javadoc; exceptions.
+
+See: https://github.com/oliviercailloux/java-course/raw/main/Contrat/Pr%C3%A9sentation/presentation.pdf[présentation].
+
+== Technical hints
+* Generate Javadoc from VS Code: type `/**`, https://github.com/redhat-developer/vscode-java/issues/228#issuecomment-414857416[click]
+* Use the https://github.com/oliviercailloux/java-course/blob/main/Dev%20tools/VS%20Code.adoc[`Documentation`] view
+
+== Exercices
+. Implement a method `randomFail()` that throws an `IllegalStateException` with one chance on two. Call this method three times in a row from your main (without looping). Run your program until it fails. Determine how to find which of the three calls raised the exception, just by looking at the stack trace (hint: look at the line numbers).
+** Hint: use `Math.random()`. (For a more object-oriented way of generating random data in Java, see the exercices in https://github.com/oliviercailloux/java-course/blob/main/Overview/README.adoc[Overview])
+. Implement a method that calls `randomFail()`, then, throws itself an `IllegalStateException` with one chance on two. Call this method repeatedly, in an infinite loop, from your main. Run your program. Determine how to find if the exception was raised in the `randomFail()` method or in the other one, just by looking at the method names on the stack trace. Click on the stack trace and observe the result.
+
+In the exercices below, comment at least one of the method you develop with proper Javadoc comments. Indicate what the method does, what parameter values are appropriate, which exceptions can be thrown.
+
+* https://math.hws.edu/javanotes/c4/exercises.html[EE4.1], 4.2
+* EE4.3, 4.4 [I]
+* EE4.7
+
+== References
+
+From Eck’s book:
+
+* https://math.hws.edu/javanotes/contents-with-subsections.html[ES3.7] Exceptions (except 3.7.3)
+* ES4 Subroutines, lambdas, packages, javadoc.
+* ES4.2.4 Member Variables [I]
+* ES4.3 intro to 4.3.2, 4.7.1 Preconditions and Postconditions [I]
+* https://math.hws.edu/javanotes/c4/quiz.html[EQ4]
+* Illustration: ES4.7.2 A Design Example
+
+Javadoc, from Stéphane Airiau’s course (in French): https://www.lamsade.dauphine.fr/~airiau/Teaching/L3-Java/cours3.pdf[Airiau C3], pp. 12 to 19.
+
+Slightly more advanced material for the curious reader: https://github.com/oliviercailloux/java-course/raw/main/Assert/presentation.pdf[assertions]
+

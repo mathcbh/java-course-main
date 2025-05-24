@@ -1,0 +1,66 @@
+= Collections
+
+See this https://www.scientecheasy.com/2018/09/collection-hierarchy-in-java-collections-class.html/[Collections] diagram. This document refers to https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Iterable.html[`Iterable`] and the rest of the collection hierarchy; as well as the https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html[`Map`] interface.
+
+Use the https://docs.oracle.com/javase/tutorial/java/nutsandbolts/for.html[enhanced for (for-each) loop] on iterables and arrays!
+
+For this course, use by default: `ArrayList` / `ImmutableList`; `LinkedHashSet` / `ImmutableSet`; `LinkedHashMap` / `ImmutableMap`.
+
+== Exercices: defining iterables
+
+. Define a class `StringPairIterator` that implements `Iterator<String>`. (Is your class a generic type?) Such an object contains (as a field) a `Pair` of `String` (as implemented in a https://github.com/oliviercailloux/java-course/blob/main/Objects%20%26%20interfaces/README.adoc#exercice-generic-pair[previous exercice]), and is able to iterate over a pair of two strings. The first call to `next()` gives the left member, the second call to `next()` gives the right member, and `hasNext()` returns `false` afterwards. Document the contracts of `StringPairIterator` and check that they are compatible with the contracts of `Iterator<E>`. In a `main` method, define a pair, then a pair iterator, and use it to print the two members of the pair. Then, define a class `PairIterator<E>` that implements `Iterator<E>` in a similar way (is this new class generic?). Modify your `main` accordingly.
+
+. Define a class `HomogeneousPair<E>` (a pair whose two members have the same type). Let your class implement `Iterable<E>`. When asked for an iterator, your pair returns an instance of type `PairIterator<E>`. Define your method header for `iterator()` such that it announces that it returns `Iterator<E>`. Will the compiler accept that you in fact return `PairIterator<E>` when announcing `Iterator<E>`, and if so, will it work at runtime? Check your answer by trying it! Then, change your method header for `iterator()` such that it announces that it returns `PairIterator<E>`. Will the compiler accept that you announce returning `PairIterator<E>` in a class that declares implementing `Iterable<E>` (and thus that should, when asked for `iterator()`, return an `Iterator<E>`), and if so, will it work at runtime? Check your answer by trying it!
+* More advanced, and more elegant: instead of defining a class `HomogeneousPair<E>` from scratch, define the class `HomogeneousPair<E>` so that it extends your existing class `Pair<L, R>`. Do the rest of the exercice above.
+
+== Exercices: using collections
+* Implement a class E1 that asks the end-user for a set of integer values. The user enters 0 to stop entering values. Store these values in a Set of Integer values (discarding duplicates). Do it again, obtaining a second set. Then print each set of values entered, then the union of both sets. For example, if the user enters 3, 4, 2, 0, then 1, 1, 2, 5, 0, it prints: 3, 4, 2, then 1, 2, 5, then 3, 4, 2, 1, 5. Use Java sets and interfaces appropriately.
+//interfaces with generics and collections
+* https://math.hws.edu/javanotes/c10/exercises.html[EE10.4] 
+// list of words
+* https://math.hws.edu/javanotes/c7/exercises.html[EE7.6] (you may use standard input instead of file input)
+// set (long)
+* https://math.hws.edu/javanotes/c10/exercises.html[EE10.2] [I]
+// read, sort a list
+* https://math.hws.edu/javanotes/c7/exercises.html[EE7.1], 7.5 (except that you can use built-sorting functions from the Java API).
+
+//** Correct E1
+//.. découpé en sous-routines ?
+//.. contrat général (Collection au lieu de LinkedList) ?
+//.. noms complets de classes uniques ?
+//.. structures appropriées ? (Set)
+//.. réutilisation si on demande les nombres différemment ? (Lus depuis fichiers)
+//.. nommage approprié ? (searchNumber renvoie boolean, non, devrait poser une question: isIn)
+//.. documentation javadoc lorsque nécessaire ?
+//.. utilisation adéquate des structures ? (ne pas rechercher un nombre dans une liste)
+//.. conventions respectées ? (noms de variables et méthodes en camelCase, de classes en PascalCase, de packages en minuscules, …)
+//.. méthodes d’instance (et pas statiques) ?
+//.. pas de commentaires inutiles (tq auto-générés //TODO, @author vide, …)
+//.. (micro) pas de comparaison à `true` (`if(isBig == true)`)
+//.. vous arrivez à voir le résultat de votre code javadoc (exemple: `@param truc of type String` inutile)
+
+== Maps and comparators
+More info: https://math.hws.edu/eck/cs124/javanotes7/c10/[ES10.3] to 10.5, https://math.hws.edu/eck/cs124/javanotes7/c8/[ES8] intro to 8.4, Airiau https://www.lamsade.dauphine.fr/~airiau/Teaching/L3-Java/cours6.pdf[C6]
+
+Exercice:
+
+* Define an interface `EasyMap` with two methods: a method that puts a pair of key (`String`, the last name of a person, here supposed to be unique) and value (`Person`, having a first name and a last name) into a map, and a method that returns an `Optional` containing the value corresponding to the given key (parameter of the method) or that returns an empty `Optional` if there is no such value. Implement this interface in a class `EasyMapImpl`. Provide a static factory method in the interface `EasyMap` (it declares that it returns an `EasyMap`, and does it by instanciating your `EasyMapImpl`). Make sure that all the constructors of `EasyMapImpl` are private. Minimize the number of lines of code (but not at the price of readability). Note that this exercice implements a part of the https://en.wikipedia.org/wiki/Forwarding_(object-oriented_programming)[forwarding] pattern.
+* Define `MyComparator`, a class that implements a comparator over `Person`: it considers a person as “smaller” (or “coming before”) another person according to the dictionary ordering of their last name. Add a third method to `EasyMap`, that returns a list of values ordered by that comparator.
+
+//maps
+https://math.hws.edu/javanotes/c10/exercises.html[EE10.1]
+
+// implement a hashmap with a list of lists
+https://math.hws.edu/javanotes/c10/exercises.html[EE10.3] (you may use `List` implementations, but not `Map`, of course)
+
+// TreeMap<String, TreeSet<Integer>>  concordance
+https://math.hws.edu/javanotes/c10/exercises.html[EE10.6]
+
+== Exercice: Chess
+Have a look at the https://en.wikipedia.org/wiki/Algebraic_notation_(chess)[algebraic notation] and at the https://en.wikipedia.org/wiki/Chess_piece[chess pieces] if you know nothing about chess. (You do not have to know the rules of the game.)
+
+Clone https://github.com/oliviercailloux/sample-chess/[this repository]. Implement the class `MyChessBoard`, making sure it satisfies its contracts. You are encouraged to discuss your ideas or doubt with classmates. A solution is available in the branch `impl`. Look at it only when you are done and all the tests pass!
+
+== References
+* https://math.hws.edu/javanotes/contents-with-subsections.html[ES10] to 10.2
+

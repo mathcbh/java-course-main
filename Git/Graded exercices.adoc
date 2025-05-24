@@ -1,0 +1,41 @@
+= Graded exercices
+
+This document explains how to submit your solutions for the graded exercices of this course.
+
+* Each graded exercice uses its own “GitHub assignment” (a mechanism proposed by GitHub classroom to dispatch exercices in a class).
+* Each assignment has its own name and link. Start by clicking the link and accept the assignment
+** This creates a GitHub repository that you own in my GitHub “organisation”, `oliviercailloux-org`
+** Your repository will be created as `+https://github.com/oliviercailloux-org/assignmentName-yourGitHubUserName+`
+** This repository will be initialized with some data
+* Clone your new repository
+** You have to work on your local repository, and regularly push your additions to the remote
+** Both you and I have access to your remote repository. I use this access to grade your work
+** Note that I have no access to your local repository, so, whatever you do not push, I cannot grade
+* Do whatever the assignment asks you to do (for example, add some code to some files, create new files, …) in your local repository
+** You can use pre-existing resources on your computer (course, your notes…) and on the internet. You can search on Google, StackOverflow, or any other engine that returns pre-existing answers. It is _absolutely forbidden_ to use any resource that is generated on the fly, such as large language models (ChatGPT or others), post a question on a forum, …
+* Push your work to your remote
+** Push regularly, do not wait the end of the allowed time, so as to prevent last minute problems
+** Remember that you need to push all branches that you want me to see
+* Hint: Check with the GitHub web interface that your commits and branches have reached the remote repository
+* Your last commit on time is graded. Also, your commits overtime are graded, and penalized linearly according to the delay, so that five minutes delay is penalized 100%. The best grade is kept. So, pushing after the delay can only improve your grade.
+* When you are done, you may exit the classroom only if you push a tag `END` on the latest commit that you want to be considered.
+
+== Configuration
+It is important that your git `user.name` https://github.com/oliviercailloux/java-course/blob/main/Git/README.adoc#Configure-git[equals] (exactly) your GitHub username, so that I can associate your contributions to you. This will be important when working on projects. I will also grade whether you configured your git correctly even before projects, as part of each graded exercice.
+
+== The `training` assignment
+* Here is https://classroom.github.com/a/82sB-Te7[the link] for the “training” assignment. 
+* You should be able to predict the name of the GitHub repository that will be created when you will accept this assignment.
+* You can use this to practice as much as you want. 
+* This repository will not be used to grade your work.
+* In this assignment, you start with a file named `hello.txt` which contains `Hello, world.`
+
+If you want to start fresh (for example, before starting a new exercice), https://docs.github.com/repositories/creating-and-managing-repositories/deleting-a-repository[delete] your “training” repository.
+
+== Exercice: hello world
+Accept the `training` assignment (link here above) and translate the content of the file `hello.txt` to say hello in another language of your choice. One prestige point to you if it is a language that I have not yet seen in other student works and you did not use external help for the translation. Make sure this is visible on your remote repository.
+
+== Trying again
+I will sometimes grant a second chance. In those cases, the new grade will, unless noted otherwise, consider the number of lines that you changed in between both attempts. Here is a related comment from a previous year (in French).
+
+Je vous attribuerai alors comme note une combinaison de l’ancienne et de la nouvelle note, dépendant de l’ampleur de vos modifications. Cette combinaison dépendra typiquement du *nombre de lignes modifiées*. Elles sont comptées en considérant la différence ensembliste symétrique entre les lignes de votre fichier original et les lignes de votre nouveau fichier (additionnées sur tous les fichiers modifiés). Les changements d’ordre entre les lignes ne comptent donc pas. Attention, les différences de simples caractères tels que les espaces, les tabulations, les fins de lignes comptent comme des différences comme les autres (voir https://github.com/oliviercailloux/java-course/blob/main/Git/Best%20practices.adoc#end-of-lines[end of lines] et https://github.com/oliviercailloux/java-course/blob/main/Style/Code.adoc#formatting[formatting]). Si https://code.visualstudio.com/docs/java/java-linting[formater] votre code augmente son nombre de lignes, ces lignes supplémentaires sont ajoutées au nombre de lignes différentes. Lisez https://docs.github.com/en/github/committing-changes-to-your-project/comparing-commits[comparing commits] pour vérifier visuellement que vous n’introduisez pas de changements inutiles.

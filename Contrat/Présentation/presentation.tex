@@ -1,0 +1,317 @@
+\RequirePackage[l2tabu, orthodox]{nag}
+\RequirePackage{silence}
+\WarningFilter{fmtcount}{\ordinal already defined use \FCordinal instead}
+\documentclass[english, french]{beamer}
+\input{preamble/packages}
+\input{preamble/math_basics}
+\input{preamble/math_mine}
+\input{preamble/redac}
+\input{preamble/draw}
+\input{preamble/uml}
+
+\setbeamertemplate{headline}[singleline]
+\setbeamertemplate{footline}[onlypage]
+
+\title{Découpe et contrats en génie logiciel}
+\subtitle{}
+\subject{Génie logiciel}
+\keywords{Java, JVM, sous-routines, boite noire}
+\author{Olivier Cailloux}
+\institute[LAMSADE]{LAMSADE, Université Paris-Dauphine}
+\date{Version du \today}
+
+\begin{document}
+\bibliographystyle{apalike}
+
+\begin{frame}[plain]
+	\tikz[remember picture,overlay]{
+		\path (current page.south west) node[anchor=south west, inner sep=0] {
+			\includegraphics[height=1cm]{LAMSADE95.jpg}
+		};
+		\path (current page.south) ++ (0, 1mm) node[anchor=south, inner sep=0] {
+			\includegraphics[height=9mm]{Dauphine.jpg}
+		};
+		\path (current page.south east) node[anchor=south east, inner sep=0] {
+			\includegraphics[height=1cm]{PSL.png}
+		};
+	}
+   \titlepage
+\end{frame}
+\addtocounter{framenumber}{-1}
+
+\section{Découpe en sous-routines}
+\subsection{Découpe}
+\begin{frame}
+	\frametitle{Découpe}
+	\begin{itemize}
+		\item Problèmes résolus par découpe en sous-problèmes
+		\item Logiciels : pouvoir s’appuyer sur des blocs dont on oublie les détails
+		\item Exemple : calcul d’une racine carrée
+		\item Organisation d’une entreprise commerciale ?
+		\item<2-> Découpe en services
+		\item<2-> Exemple : secrétariat fournit des accessoires
+		\item Organisation d’une société humaine ?
+		\item<3-> Système judiciaire, exécutif, législatif
+		\item Découpe parfois peu étanche !
+		\item Raisonnement mathématique
+	\end{itemize}
+\end{frame}
+%		\item Méthode : entrée (facultative), ensemble d’instructions, sortie (facultative)
+%		\item Fait qqch
+%		\item On peut l’appeler sans savoir comment elle procède (boîte noire)
+
+\begin{frame}
+	\frametitle{Découpe en informatique}
+	\begin{itemize}
+		\item En fait, que se passe-t-il lors du calcul d’une racine carrée, d’une lecture de fichier, … ? \pause
+		\item Appel à la JDK
+		\item Appel \href{https://stackoverflow.com/a/1599519}{système d’exploitation}
+		\item Appel au processeur
+		\item Chacun résoud des sous-problèmes pour qqn d’autre
+		\item Exemples de gros sous-problèmes déjà résolus pour vous dans tout langage de programmation de haut niveau ? \pause
+		\item Structures de données : listes, etc.
+	\end{itemize}
+\end{frame}
+
+\subsection{Interfaces}
+\begin{frame}
+	\frametitle{\subsecname}
+	\begin{itemize}
+		\item Interface entre l’implémentation et le monde extérieur
+		\item Penser à l’inter-face entre une \href{https://www.youtube.com/watch?v=0xe1s65IH0w}{cellule} et le monde (sa membrane)
+		\item Analogue à une entreprise : interface secrétariat
+		\item GUI ? \onslide<2->{Graphical User Interface}
+		\item Multiples interfaces possibles pour un même service
+		\item Exemple entreprise ? \onslide<3->{Formulaire, demande orale, …}
+		\item Exemple radiateur ? \onslide<4->{Boutons différents, à différents endroits, commande vocale, …}
+		\item Exemple voiture ? \onslide<5->{Boite automatique VS boite manuelle}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Interfaces pour différents utilisateurs}
+	\begin{itemize}
+		\item Une même entité peut avoir différents niveaux d’interface
+		\item Interface plus simple, interface plus complète
+		\item Exemples ?
+		\item<2-> Accès difficiles (réservés aux parents) sur jouet pour enfant
+		\item<2-> Deux systèmes sur lave-vaisselles
+		\item<2-> Menu de configuration de votre télévision
+		\item Interface pour utilisateur final, interface pour assembleur
+		\item Exemples ? \onslide<3->{Voiture (conduire VS entretenir) ; Système d’exploitation (utiliser VS installer des logiciels)}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Interfaces pour le programmeur}
+	\begin{itemize}
+		\item Vous développez des sous-routines
+		\item Ces sous-routines sont accessibles à des programmeurs
+		\item Y compris vous-même !
+		\item Elles peuvent être combinées pour créer différents programmes pour utilisateur final
+		\item Elles peuvent être inspectées en cas de bug
+		\item API ? \onslide<2->{Application Programming Interface}
+		\item<2-> Accessible par programme (API ≠ End-user Interface)
+		\item Une interface peut aussi être un ensemble d’interfaces !
+		\item Exemple ? \onslide<3->{API de Java}
+	\end{itemize}
+\end{frame}
+
+\section{Contrat}
+\begin{frame}
+	\frametitle{Contrat}
+	\begin{itemize}
+		\item Découpe en sous-problèmes résolus par des services
+		\item Service fonctionne sous certaines conditions
+		\item Contrat : clarification des devoirs de l’utilisateur et du fournisseur de service
+		\item entre appelant et programmeur de la sous-routine
+		\item Devoirs appelés \emph{préconditions}
+		\item Exemple : entier fourni en paramètre > 0
+		\item Sous ces conditions, méthode fournit un service
+		\item Si conditions non remplies : pas de garanties offertes !
+		\item \emph{Postconditions} : garanties offertes en retour
+		\item Exemple : renvoie un nombre aléatoire entre 0 et l’entier fourni, exclu
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Contrat à expliciter}
+	\begin{itemize}
+		\item Contrat facilite l’implémentation de la sous-routine
+		\item Contrat facilite la vie de l’utilisateur
+		\item À condition de rendre le contrat explicite
+		\item Documenter les préconditions et postconditions
+		\item Utilisateur averti : pensera plus probablement à vérifier les préconditions
+	\end{itemize}
+\end{frame}
+
+\section{Échec rapide}
+\begin{frame}
+	\frametitle{Échec rapide}
+	Principe de l’\emph{échec rapide} (\emph{fail-fast}):
+	\begin{itemize}
+		\item Mieux vaut une erreur immédiate qu’une action inattendue
+		\item Évite les conséquences catastrophiques
+		\item Facilite les corrections de bug
+		\item Deux mises en œuvre : programmation défensive (erreur de l’utilisateur) ; programmation prudente (erreur du programmeur)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Programmation défensive}
+	\begin{itemize}
+		\item Aider les utilisateurs étourdis
+		\item Échec rapide si précondition non satisfaite
+		\item En pratique : tester les préconditions en entrée de sous-routine {\tiny (sauf si très couteux en temps)}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Programmation prudente}
+	\begin{itemize}
+		\item Tester vos déductions à des endroits cruciaux 
+		\item Échec rapide si non valide
+		\item Exemple : je sais qu’ici telle valeur devrait être positive
+	\end{itemize}
+\end{frame}
+
+\section{Exceptions}
+\subsection{En génie logiciel}
+\begin{frame}
+	\frametitle{Exceptions}
+	\begin{itemize}
+		\item Interrompt le flux normal de traitement
+		\item Pour gérer une situation exceptionnelle
+		\item Exemple ? \onslide<2->{Erreur utilisateur ; Erreur programmeur ; Mémoire vive épuisée}
+		\item Différence par rapport à un test (if / else) ? \onslide<3->{Service \og{}normal\fg{} non rendu}
+		\item Est une forme d’\emph{interruption}
+		\item Exemple d’interruption qui n’est pas une exception ? \onslide<4->{Préemption du processeur par un OS multi-tâches}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Problèmes résolus par les exceptions}
+	\begin{itemize}
+		\item Opérations communes souvent faillibles
+		\item Exemple : allouer de la mémoire, écrire sur un fichier
+		\item Si échec, souhait d’interrompre le flux normal
+		\item Par défaut : interrompt totalement le programme
+		\item Mais avec opportunité de traiter l’exception pour se rétablir
+		\item Éviter de devoir écrire une commande spécifique de traitement à chaque invocation
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Gestion d’exceptions}
+	\begin{itemize}
+		\item Certaines opérations peuvent lancer une \emph{exception}
+		\item Si pas de gestion spécifique prévue, envoi de l’exception à l’échelon supérieur
+		\item L’appelant peut, alternativement, \emph{gérer} l’exception
+		\item Si pas de gestion du tout : arrêt du programme
+	\end{itemize}
+\end{frame}
+
+\subsection{En Java (aperçu)}
+\begin{frame}
+	\frametitle{En Java (aperçu)}
+	\begin{itemize}
+		\item Java utilise des \texttt{Throwable} pour représenter tout ce qui peut être lancé pour interrompre le flux de traitement
+		\item Choisir le type de \texttt{Throwable}, par exemple \texttt{IllegalArgumentException}
+		\item Créer une exception qui représente votre problème : \texttt{IllegalArgumentException exc = new IllegalArgumentException("Positive value required.");}
+		\item La variable \texttt{exc} contient alors des détails concernant le problème (qu’est-ce qui a été appelé)
+		\item Lancer l’exception : \texttt{throw exc;}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Choix du type d’exception}
+	\begin{itemize}
+		\item Programmation défensive : interruption pour cause de précondition violée
+	\end{itemize}
+	\begin{description}%[\texttt{IllegalArgumentException}]
+		\item[\texttt{IllegalArgumentException}] L’utilisateur vous fournit un argument incorrect (exemple : précondition \emph{chaîne non vide} violée)
+		\item[\texttt{IllegalStateException}] L’utilisateur appelle votre sous-routine alors que l’état de votre programme ne le permet pas (exemple : précondition \emph{appel préalable d’une autre sous-routine} violée)
+	\end{description}
+	\begin{itemize}
+		\item Programmation prudente : interruption pour cause d’erreur de déduction détectée (vérification violée)
+	\end{itemize}
+	\begin{description}
+		\item[\texttt{VerifyException}] (Guava) Vous détectez une erreur de logique dans votre programme (exemple : une valeur devrait être paire à une certaine étape de calcul mais ne l’est pas)
+	\end{description}
+\end{frame}
+
+\section{En pratique}
+\begin{frame}
+	\frametitle{À faire}
+	\begin{itemize}
+		\item Découper en sous-routines
+		\item Documenter vos contrats
+		\item Échouer rapidement (avertir l’utilisateur de vos sous-routines) s’il y a un problème
+	\end{itemize}
+\end{frame}
+
+\appendix
+\section{Suppléments}
+\begin{frame}
+	\frametitle{Intérêt de la découpe en sous-routines}
+	\begin{itemize}
+		\item Clarté du code : auto-documentation ; boite noire
+		\item Factorisation : application conçue comme assemblage de blocs élémentaires
+		\item Éviter la duplication de code (DRY)
+		\item Bugs : correction à un seul endroit
+		\item Partage du travail entre développeurs
+		\item Estimation quantité de travail
+		\item Réusinage facilité (trouver tous les endroits où routine est appelée)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Factorisation}
+	\begin{itemize}
+		\item Code peut se ressembler sans être identique
+		\item Modifier pour qu’il soit identique mais paramétré
+		\item Exemple : Échecs, dessin du plateau vu du côté noir ou blanc
+		\item[⇒] Une seule routine de dessin, paramétrée selon couleur
+	\end{itemize}
+\end{frame}
+
+\section{Exceptions en Java}
+\begin{frame}
+	\frametitle{Deux sortes de throwable}
+	\begin{itemize}
+		\item Rappel : Throwable en Java représente ce qui peut être lancé pour interrompre le flux normal de traitement
+		\item À utiliser pour échouer rapidement
+		\item Deux sortes de throwable
+		\item Certains problèmes sont réparables (ne requièrent sans-doute pas de quitter le programme)
+		\item Exemple ? \onslide<2->{Échec lors écriture sur fichier}
+		\item Certains problèmes sont difficilement réparables
+		\item Exemple ? \onslide<2->{Erreur de logique ; Échec lors allocation mémoire}
+	\end{itemize}
+\end{frame}
+
+\section{Licence}
+\begin{frame}
+	\frametitle{Licence}
+	Cette présentation, et le code LaTeX associé, sont sous \href{https://opensource.org/licenses/MIT}{licence MIT}. Vous êtes libres de réutiliser des éléments de cette présentation, sous réserve de citer l’auteur.
+	
+	Le travail réutilisé est à attribuer à \href{https://www.lamsade.dauphine.fr/~ocailloux/}{Olivier Cailloux}, Université Paris-Dauphine.
+\end{frame}
+\end{document}
+
+\section{Bibliographie}
+\begin{frame}[allowframebreaks]
+	\frametitle{Bibliographie}
+	\def\newblock{\hskip .11em plus .33em minus .07em}
+% 	\bibliography{zotero}
+\end{frame}
+
+\section{Autres}
+
+\begin{frame}
+	\frametitle{\subsecname}
+	\begin{itemize}
+		\item 
+	\end{itemize}
+\end{frame}
+
+\end{document}
