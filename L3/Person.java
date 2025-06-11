@@ -1,6 +1,6 @@
 package io.github.oliviercailloux.teaching_examples;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,10 +17,14 @@ public class Person {
 		Person p1 = iterator.next();
 		System.out.println(p1.name);
 
-		System.out.println("Next: " + iterator.hasNext());
-		Person p2 = iterator.next();
-		System.out.println(p2.name);
-	}
+                System.out.println("Next: " + iterator.hasNext());
+                if (iterator.hasNext()) {
+                        Person p2 = iterator.next();
+                        System.out.println(p2.name);
+                } else {
+                        System.out.println("No second person available.");
+                }
+        }
 
 	/**
 	 * Not {@code null}
@@ -29,8 +33,8 @@ public class Person {
 
 	private Optional<PhoneNumber> phoneNumber;
 
-	public Person(String name, PhoneNumber phoneNumber) {
-		Preconditions.checkNotNull(name);
+        public Person(String name, PhoneNumber phoneNumber) {
+                Objects.requireNonNull(name);
 		this.name = name;
 		if (phoneNumber == null) {
 			this.phoneNumber = Optional.empty();
